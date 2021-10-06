@@ -56,3 +56,19 @@
 	font-size:20px;
 	vertical-align:middle;
 }
+.label-info .webix_el_box{
+	font-size: 25px;
+}
+.page-background {
+	background-color: white;
+}
+
+.app-title {
+	font-size: 20px;
+}
+.user-icon {
+	width: 40;
+	height: 40;
+	border-radius: 100%;
+	margin: 5 10 5 10;
+}

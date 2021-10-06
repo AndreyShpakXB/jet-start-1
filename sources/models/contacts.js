@@ -30,8 +30,8 @@ const contactsCollection = new webix.DataCollection({
 			surname: "Mistukevich",
 			email: "mistukevich@",
 			skype: "live:mistukevich",
-			job: "Wife",
-			company: "Home",
+			job: "?",
+			company: "?",
 			birthdate: "21-05-2003",
 			location: "Belarus",
 			status: "open"

@@ -2,6 +2,15 @@ import {JetView} from "webix-jet";
 
 import contactsCollection from "../../models/contacts";
 
+function setIcon(icon) {
+	const template =
+	`<div style='display:flex;align-items: center;;'>
+		<span style='display:inline' class='fas ${icon}'></span>&nbsp;#label#
+	</div>`;
+
+	return template;
+}
+
 export default class ContactInfoView extends JetView {
 	constructor(app, id) {
 		super(app);
@@ -10,45 +19,54 @@ export default class ContactInfoView extends JetView {
 
 	config() {
 		const header = {
+			padding: 10,
 			localId: "header",
 			cols: [
-				{view: "label", localId: "name", label: "Name Surname", css: "label-info"},
+				{view: "label", localId: "name", label: "Name Surname", css: "label-info-name"},
 				{
 					css: "background-color: white;",
 					cols: [
-						{view: "button", value: "Delete", width: 150},
-						{view: "button", value: "Edit", width: 150}
+						{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash"},
+						{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil"}
 					]
 				}
 			]
 		};
 
 		const h = 50;
-		const w = 150;
+		const w = 250;
 		const firstCol = {
+			padding: 10,
 			rows: [
-				{view: "label", localId: "image", label: "image"},
-				{view: "label", localId: "status", label: "Status", height: h, width: w}
+				{view: "template", localId: "image", css: "contact-image", template: "img"},
+				{view: "label", localId: "status", label: "Status", css: "status", width: w}
 			]
 		};
 		const secondCol = {
 			rows: [
-				{view: "label", localId: "email13", label: "email", height: h, width: w, css: "label-info"},
-				{view: "label", localId: "skype", label: "skype", height: h, width: w},
-				{view: "label", localId: "job", label: "job", height: h, width: w},
-				{view: "label", localId: "company", label: "company", height: h, width: w}
+				{view: "label", localId: "email", label: "Email", height: h, width: w, css: "label-info", template: setIcon("fa-envelope")},
+				{view: "label", localId: "skype", label: "Skype", height: h, width: w, css: "label-info", template: setIcon("fa-skype")},
+				{view: "label", localId: "job", label: "Job", height: h, width: w, css: "label-info", template: setIcon("fa-tag")},
+				{view: "label", localId: "company", label: "Company", height: h, width: w, css: "label-info", template: setIcon("fa-building")}
 			]
 		};
 		const thirdCol = {
 			rows: [
-				{view: "label", localId: "birthdate", label: "date of birth", height: h, width: w},
-				{view: "label", localId: "location", label: "location", height: h, width: w}
+				{view: "label", localId: "birthdate", label: "Date of birth", height: h, width: w, css: "label-info", template: setIcon("fa-calendar-alt")},
+				{view: "label", localId: "location", label: "Location", height: h, width: w, css: "label-info", template: setIcon("fa-map-marker-alt")}
 			]
+		};
+
+		const space = {
+			view: "template",
+			width: 50,
+			borderless: true
 		};
 
 		const content = {
 			cols: [
 				firstCol,
+				space,
 				secondCol,
 				thirdCol,
 				{}
@@ -71,19 +89,50 @@ export default class ContactInfoView extends JetView {
 		if (url[0].page === "contacts") {
 			const id = url[0].params.id;
 			const contact = contactsCollection.getItem(id);
-			this.showContact(contact);
+			if (contact) {
+				this.showContact(contact);
+			}
+			else if (id) {
+				this.webix.message({
+					type: "error",
+					text: `Contact is not founded, id:${id}`
+				});
+			}
 		}
 	}
 
 	showContact(contact) {
-		this.$$("name").define("label", `${contact.name} ${contact.surname}`);
-		console.log(this.$$("email13").label);
-		this.$$("email13").define("label", `${contact.email} `);
-		this.$$("skype").define("label", contact.skype);
-		this.$$("job").define("label", contact.job);
-		this.$$("company").define("label", contact.company);
-		this.$$("birthdate").define("label", contact.birthdate);
-		this.$$("location").define("label", contact.location);
-		this.$$("status").define("label", contact.status);
+		const name = this.$$("name");
+		name.define("label", `${contact.name} ${contact.surname}`);
+		name.refresh();
+
+		const email = this.$$("email");
+		email.define("label", `${contact.email}`);
+		email.refresh();
+
+		const skype = this.$$("skype");
+		skype.define("label", contact.skype);
+		skype.refresh();
+
+		const job = this.$$("job");
+		job.define("label", contact.job);
+		job.refresh();
+
+		const company = this.$$("company");
+		company.define("label", contact.company);
+		company.refresh();
+
+		const birhday = this.$$("birthdate");
+		birhday.define("label", contact.birthdate);
+		birhday.refresh();
+
+		const location = this.$$("location");
+		location.define("label", contact.location);
+		location.refresh();
+
+		const status = this.$$("status");
+		status.define("label", contact.status);
+		status.refresh();
 	}
 }
+

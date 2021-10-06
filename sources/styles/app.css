@@ -56,7 +56,7 @@
 	font-size:20px;
 	vertical-align:middle;
 }
-.label-info .webix_el_box{
+.label-info-name .webix_el_box{
 	font-size: 25px;
 }
 .page-background {
@@ -71,4 +71,29 @@
 	height: 40;
 	border-radius: 100%;
 	margin: 5 10 5 10;
+	
+}
+
+.label-info{
+	font-size: 17px;
+	display: flex;
+	align-items: center;
+}
+
+.contact-image {
+	display: table-cell;
+	background-color: rgb(241, 240, 240);
+	border: 1px solid #e1e1e2;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.status {
+	font-size: 17px;
+	text-align: center;
+}
+
+.popup-header .webix_template {
+	font-size: 25px;
+	text-align: center;
 }

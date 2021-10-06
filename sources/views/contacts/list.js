@@ -30,7 +30,9 @@ export default class ContactsListView extends JetView {
 
 	init() {
 		contactsCollection.waitData.then(() => {
-			this.$$("list").parse(contactsCollection);
+			const list = this.$$("list");
+			list.parse(contactsCollection);
+			list.select(contactsCollection.getFirstId());
 		});
 	}
 }

@@ -15,7 +15,7 @@ function showPopup(object, table) {
 		formatted.time = formatted.date.substring(formatted.date.length - 5);
 		webix.$$("popup_form").setValues(formatted);
 	}
-	if (table) {
+	else if (table) {
 		table.unselectAll();
 	}
 
@@ -126,6 +126,11 @@ export default class ActivitiesView extends JetView {
 	}
 
 	init() {
-		this.$$("table").sync(activitiesCollection);
+		try {
+			this.$$("table").sync(activitiesCollection);
+		}
+		catch (ex) {
+			this.webix.message({type: "error", text: ex.message});
+		}
 	}
 }

@@ -48,25 +48,36 @@ const popup = webix.ui({
 					label: "Add",
 					localId: "button_add",
 					click() {
+						const form = webix.$$("popup_form");
+						if (!form.validate()) {
+							return;
+						}
 						const values = webix.$$("popup_form").getValues();
 
-						const date = webix.Date.dateToStr("%Y-%m-%d")(values.date);
-
-						const time = webix.Date.dateToStr("%H:%i")(values.time);
-						const newDate = `${date} ${time}`;
-						values.date = newDate;
+						if (values.date) {
+							const date = webix.Date.dateToStr("%Y-%m-%d")(values.date);
+							const time = webix.Date.dateToStr("%H:%i")(values.time);
+							const newDate = `${date} ${time}`;
+							values.date = newDate;
+						}
 
 						if (values.time) {
 							delete values.time;
 						}
 
 						if (!values.id) {
-							activitiesCollection.add(values);
+							try {
+								activitiesCollection.add(values);
+							}
+							catch (ex) {
+								webix.message({type: "error", text: ex.message});
+							}
 						}
 						else {
 							activitiesCollection.updateItem(values.id, values);
 						}
-						webix.$$("popup_form").clear();
+						form.clear();
+						form.clearValidation();
 						webix.$$("activity_popup").hide();
 					}
 				},
@@ -74,12 +85,18 @@ const popup = webix.ui({
 					view: "button",
 					label: "Cancel",
 					click() {
-						webix.$$("popup_form").clear();
+						const form = webix.$$("popup_form");
+						form.clear();
+						form.clearValidation();
 						webix.$$("activity_popup").hide();
 					}
 				}
 			]}
-		]
+		],
+		rules: {
+			typeId: val => !!val,
+			contactId: val => !!val
+		}
 	}
 });
 

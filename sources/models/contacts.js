@@ -8,7 +8,7 @@ const contactsCollection = new webix.DataCollection({
 			skype: "live:shpak",
 			job: "Programmer",
 			company: "XBsoftware",
-			birthdate: "24-06-2003",
+			birthdate: "2003-06-24 00:00",
 			location: "Belarus",
 			status: "Work"
 		},
@@ -20,7 +20,7 @@ const contactsCollection = new webix.DataCollection({
 			skype: "live:popkov",
 			job: "Programmer",
 			company: "ITechart",
-			birthdate: "17-01-2003",
+			birthdate: "2003-01-17 00:00",
 			location: "Belarus",
 			status: "Work"
 		},
@@ -32,7 +32,7 @@ const contactsCollection = new webix.DataCollection({
 			skype: "live:mistukevich",
 			job: "?",
 			company: "?",
-			birthdate: "21-05-2003",
+			birthdate: "2003-21-05 00:00",
 			location: "Belarus",
 			status: "Open"
 		}

@@ -4,13 +4,15 @@ import activitiesCollection from "../models/activities";
 import activityTypes from "../models/activityTypes";
 import contactsCollection from "../models/contacts";
 
+const dateFormat = "%d %F %Y";
+
 function showPopup(popup, object, table) {
 	const buttonName = object ? "Save" : "Add";
 	const popupHeader = object ? "Edit activity" : "Add activity";
 
 	if (object) {
 		const formatted = Object.assign({}, object);
-		formatted.date = webix.Date.strToDate("%d %F %Y")(formatted.date);
+		formatted.time = webix.Date.strToDate("%");
 		webix.$$("popup_form").setValues(formatted);
 	}
 	if (table) {
@@ -28,6 +30,7 @@ function showPopup(popup, object, table) {
 
 	popup.show();
 }
+
 
 export default class ActivitiesView extends JetView {
 	config() {
@@ -48,23 +51,32 @@ export default class ActivitiesView extends JetView {
 				}
 			};
 
+			contactsCollection.data.each((val) => {
+				if (!val.value) {
+					val.value = `${val.name} ${val.surname}`;
+				}
+			});
+
 			const table = {
 				localId: "table",
 				view: "datatable",
 				columns: [
 					{id: "completed", header: "", template: "{common.checkbox()}", minWidth: 150},
 					{id: "typeId", header: ["Activity type", {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
-					{id: "date", header: ["Due date", {content: "textFilter"}], minWidth: 150, width: 250, sort: "date"},
+					{
+						id: "date",
+						minWidth: 150,
+						width: 250,
+						header: ["Due date", {content: "dateFilter"}],
+						format:webix.Date.dateToStr(dateFormat),
+						sort: "date"
+					},
 					{id: "details", header: ["Details", {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
 					{
 						id: "contactId",
 						header: ["Contact", {content: "selectFilter"}],
 						minWidth: 150,
-						collection: {config: {data: contactsCollection, template: "#name#"}},
-						template(obj) {
-							const cont = contactsCollection.getItem(obj.contactId);
-							return `${cont.name} ${cont.surname}`;
-						},
+						collection: contactsCollection,
 						fillspace: true,
 						sort: "text"
 					},
@@ -88,7 +100,7 @@ export default class ActivitiesView extends JetView {
 						return false;
 					},
 					"wxi-trash": function (e, obj) {
-						webix.confirm("Are you sure?").then(() => {
+						webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
 							activitiesCollection.remove(obj);
 						});
 						return false;
@@ -138,7 +150,7 @@ webix.ui({
 			{view: "combo", options: {body: {data: contactsCollection, template: "#name# #surname#"}}, label: "Contact", name: "contactId"},
 			{
 				cols: [
-					{view: "datepicker", label: "Date", name: "date", format: "%d %F %Y"},
+					{view: "datepicker", label: "Date", name: "date", format: dateFormat},
 					{
 						view: "datepicker",
 						width: 300,
@@ -165,7 +177,7 @@ webix.ui({
 					localId: "button_add",
 					click() {
 						const values = webix.$$("popup_form").getValues();
-						values.date = webix.Date.dateToStr("%d %F %Y")(values.date);
+						// values.date = webix.Date.dateToStr("%d %F %Y")(values.date);
 						if (!values.id) {
 							activitiesCollection.add(values);
 						}

@@ -9,15 +9,15 @@ export default class ContactsListView extends JetView {
 			view: "list",
 			maxWidth: 300,
 			template:
-			`<div style="display:flex;direction:column;">
-				<div style="user-icon"></div>
+			`<div style="display:flex;direction:column;align-items:center;">
+				<div class='user-icon'></div>
 				<div>
 					<div>#name# #surname#</div>
 					<div>#email#</div>
 				</div>
 			</div>`,
 			type: {
-				height: 60
+				height: 65
 			},
 			select: true,
 			on: {

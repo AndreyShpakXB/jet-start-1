@@ -36,9 +36,8 @@ export default class ContactInfoView extends JetView {
 		const h = 50;
 		const w = 250;
 		const firstCol = {
-			padding: 10,
 			rows: [
-				{view: "template", localId: "image", css: "contact-image", template: "img"},
+				{view: "template", localId: "image", css: "contact-image", template: "Image"},
 				{view: "label", localId: "status", label: "Status", css: "status", width: w}
 			]
 		};
@@ -106,7 +105,7 @@ export default class ContactInfoView extends JetView {
 		name.define("label", `${contact.name} ${contact.surname}`);
 		name.refresh();
 
-		const keys = Object.keys(contact).filter(key => key !== "id" && !key.includes("$"));
+		const keys = Object.keys(contact).filter(key => key !== "id" && !key.includes("$") && key !== "name");
 		keys.forEach((key) => {
 			const obj = this.$$(key);
 			if (obj) {
@@ -116,4 +115,3 @@ export default class ContactInfoView extends JetView {
 		});
 	}
 }
-

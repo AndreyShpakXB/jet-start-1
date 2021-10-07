@@ -106,33 +106,14 @@ export default class ContactInfoView extends JetView {
 		name.define("label", `${contact.name} ${contact.surname}`);
 		name.refresh();
 
-		const email = this.$$("email");
-		email.define("label", `${contact.email}`);
-		email.refresh();
-
-		const skype = this.$$("skype");
-		skype.define("label", contact.skype);
-		skype.refresh();
-
-		const job = this.$$("job");
-		job.define("label", contact.job);
-		job.refresh();
-
-		const company = this.$$("company");
-		company.define("label", contact.company);
-		company.refresh();
-
-		const birhday = this.$$("birthdate");
-		birhday.define("label", contact.birthdate);
-		birhday.refresh();
-
-		const location = this.$$("location");
-		location.define("label", contact.location);
-		location.refresh();
-
-		const status = this.$$("status");
-		status.define("label", contact.status);
-		status.refresh();
+		const keys = Object.keys(contact).filter(key => key !== "id" && !key.includes("$"));
+		keys.forEach((key) => {
+			const obj = this.$$(key);
+			if (obj) {
+				obj.define("label", contact[key]);
+				obj.refresh();
+			}
+		});
 	}
 }
 

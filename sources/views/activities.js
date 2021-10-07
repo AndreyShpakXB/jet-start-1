@@ -57,7 +57,7 @@ export default class ActivitiesView extends JetView {
 					val.value = `${val.name} ${val.surname}`;
 				}
 			});
-
+			const self = this;
 			const table = {
 				localId: "table",
 				view: "datatable",
@@ -102,12 +102,12 @@ export default class ActivitiesView extends JetView {
 					}
 				],
 				onClick: {
-					"wxi-pencil": function (e, obj) {
+					"wxi-pencil": (e, obj) => {
 						const item = activitiesCollection.getItem(obj);
-						showPopup(item, this.$scope.$$("table"));
+						showPopup(item, self.$$("table"));
 						return false;
 					},
-					"wxi-trash": function (e, obj) {
+					"wxi-trash": (e, obj) => {
 						webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
 							activitiesCollection.remove(obj);
 						});

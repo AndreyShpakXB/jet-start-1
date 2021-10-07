@@ -12,7 +12,9 @@ function showPopup(object, table) {
 	const popupHeader = object ? "Edit activity" : "Add activity";
 	if (object) {
 		const formatted = Object.assign({}, object);
-		formatted.time = formatted.date.substring(formatted.date.length - 5);
+		if (formatted.date) {
+			formatted.time = formatted.date.substring(formatted.date.length - 5);
+		}
 		webix.$$("popup_form").setValues(formatted);
 	}
 	else if (table) {
@@ -59,6 +61,13 @@ export default class ActivitiesView extends JetView {
 			const table = {
 				localId: "table",
 				view: "datatable",
+				scheme: {
+					$init(obj) {
+						if (obj.date) {
+							obj.date = webix.Date.strToDate(dateFormat)(obj.date);
+						}
+					}
+				},
 				columns: [
 					{id: "completed", header: "", template: "{common.checkbox()}", minWidth: 150},
 					{id: "typeId", header: ["Activity type", {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
@@ -66,7 +75,7 @@ export default class ActivitiesView extends JetView {
 						id: "date",
 						minWidth: 150,
 						width: 250,
-						header: ["Due date", {content: "dateFilter"}],
+						header: ["Due date", {content: "textFilter"}],
 						format: webix.Date.dateToStr(dateFormat),
 						sort: "date"
 					},

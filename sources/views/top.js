@@ -16,9 +16,9 @@ export default class TopView extends JetView {
 			layout: "y",
 			select: true,
 			data: [
-				{value: "Contacts", id: "contacts", icon: "fas fa-tag"},
-				{value: "Activities", id: "activities", icon: "wxi-pencil"},
-				{value: "Settings", id: "settings", icon: "fas fa-cogs"}
+				{value: "Contacts", id: "contacts", icon: "wxi wxi-user"},
+				{value: "Activities", id: "activities", icon: "fas fa-user-cog"},
+				{value: "Settings", id: "settings", icon: "users-cog"}
 			]
 		};
 

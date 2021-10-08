@@ -17,7 +17,7 @@ export default class ActivitiesView extends JetView {
 				localId: "buttonAdd",
 				view: "button",
 				type: "icon",
-				icon: "fa-plus-square",
+				icon: "fas fa-plus-square",
 				label: "Add activity",
 				width: 150,
 				click() {

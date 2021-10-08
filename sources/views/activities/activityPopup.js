@@ -98,8 +98,8 @@ export default class ActivityPopup extends JetView {
 					]}
 				],
 				rules: {
-					typeId: val => !!val,
-					contactId: val => !!val
+					typeId: this.webix.rules.isNotEmpty,
+					contactId: this.webix.rules.isNotEmpty
 				}
 			}
 		};

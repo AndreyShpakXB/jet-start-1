@@ -82,12 +82,11 @@ export default class ActivitiesView extends JetView {
 						return false;
 					}
 				},
-				on: {
-					onCheck(id) {
-						const item = activitiesCollection.getItem(id);
-						activitiesCollection.updateItem(id, item);
-					}
-				},
+				// on: {
+				// 	onCheck(id) {
+
+				// 	}
+				// },
 				select: "row"
 			};
 

@@ -80,7 +80,7 @@ export default class ContactInfoView extends JetView {
 			else if (id) {
 				this.webix.message({
 					type: "error",
-					text: `Contact is not founded, id:${id}`
+					text: `Contact is not found. Id:${id}`
 				});
 			}
 		}

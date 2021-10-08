@@ -21,9 +21,7 @@ export default class ContactsListView extends JetView {
 			},
 			select: true,
 			on: {
-				onAfterSelect(id) {
-					this.$scope.show(`/top/contacts?id=${id}`);
-				}
+				onAfterSelect: id => this.show(`/top/contacts?id=${id}`)
 			}
 		};
 	}

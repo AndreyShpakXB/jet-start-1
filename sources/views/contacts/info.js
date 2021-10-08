@@ -5,7 +5,7 @@ import contactsCollection from "../../models/contacts";
 function setIcon(icon) {
 	const template =
 	`<div style='display:flex;align-items: center;;'>
-		<span style='display:inline' class='fas ${icon}'></span>&nbsp;#label#
+		<span style='display:inline' class='${icon}'></span>&nbsp;#label#
 	</div>`;
 
 	return template;
@@ -43,16 +43,16 @@ export default class ContactInfoView extends JetView {
 		};
 		const secondCol = {
 			rows: [
-				{view: "label", localId: "email", label: "Email", height: h, width: w, css: "label-info", template: setIcon("fa-envelope")},
-				{view: "label", localId: "skype", label: "Skype", height: h, width: w, css: "label-info", template: setIcon("fa-skype")},
-				{view: "label", localId: "job", label: "Job", height: h, width: w, css: "label-info", template: setIcon("fa-tag")},
-				{view: "label", localId: "company", label: "Company", height: h, width: w, css: "label-info", template: setIcon("fa-building")}
+				{view: "label", localId: "email", label: "Email", height: h, width: w, css: "label-info", template: setIcon("fas fa-envelope")},
+				{view: "label", localId: "skype", label: "Skype", height: h, width: w, css: "label-info", template: setIcon("fab fa-skype")},
+				{view: "label", localId: "job", label: "Job", height: h, width: w, css: "label-info", template: setIcon("fas fa-tag")},
+				{view: "label", localId: "company", label: "Company", height: h, width: w, css: "label-info", template: setIcon("fas fa-building")}
 			]
 		};
 		const thirdCol = {
 			rows: [
-				{view: "label", localId: "birthdate", label: "Date of birth", height: h, width: w, css: "label-info", template: setIcon("fa-calendar-alt")},
-				{view: "label", localId: "location", label: "Location", height: h, width: w, css: "label-info", template: setIcon("fa-map-marker-alt")}
+				{view: "label", localId: "birthdate", label: "Date of birth", height: h, width: w, css: "label-info", template: setIcon("fas fa-calendar-alt")},
+				{view: "label", localId: "location", label: "Location", height: h, width: w, css: "label-info", template: setIcon("fas fa-map-marker-alt")}
 			]
 		};
 

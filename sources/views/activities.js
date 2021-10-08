@@ -3,35 +3,35 @@ import {JetView} from "webix-jet";
 import activitiesCollection from "../models/activities";
 import activityTypes from "../models/activityTypes";
 import contactsCollection from "../models/contacts";
-import popup from "./activities/popup";
+import ActivityPopup from "./activities/activityPopup";
 
 const dateFormat = "%d %F %Y";
 
-function showPopup(object, table) {
-	const buttonName = object ? "Save" : "Add";
-	const popupHeader = object ? "Edit activity" : "Add activity";
-	if (object) {
-		const formatted = Object.assign({}, object);
-		if (formatted.date) {
-			formatted.time = formatted.date.substring(formatted.date.length - 5);
-		}
-		webix.$$("popup_form").setValues(formatted);
-	}
-	else if (table) {
-		table.unselectAll();
-	}
+// function showPopup(object, table) {
+// 	const buttonName = object ? "Save" : "Add";
+// 	const popupHeader = object ? "Edit activity" : "Add activity";
+// 	if (object) {
+// 		const formatted = Object.assign({}, object);
+// 		if (formatted.date) {
+// 			formatted.time = formatted.date.substring(formatted.date.length - 5);
+// 		}
+// 		webix.$$("popup_form").setValues(formatted);
+// 	}
+// 	else if (table) {
+// 		table.unselectAll();
+// 	}
 
-	const button = popup.queryView({localId: "button_add"});
-	const header = popup.queryView({localId: "header"});
+// 	const button = popup.queryView({localId: "button_add"});
+// 	const header = popup.queryView({localId: "header"});
 
-	header.define("template", popupHeader);
-	button.define("label", buttonName);
+// 	header.define("template", popupHeader);
+// 	button.define("label", buttonName);
 
-	header.refresh();
-	button.refresh();
+// 	header.refresh();
+// 	button.refresh();
 
-	popup.show();
-}
+// 	popup.show();
+// }
 
 
 export default class ActivitiesView extends JetView {
@@ -48,7 +48,8 @@ export default class ActivitiesView extends JetView {
 				label: "Add activity",
 				width: 150,
 				click() {
-					showPopup(null, this.$scope.$$("table"));
+					this.$scope.$$("table").unselectAll();
+					this.$scope._activityPopup.showPopup(null);
 				}
 			};
 
@@ -57,7 +58,7 @@ export default class ActivitiesView extends JetView {
 					val.value = `${val.name} ${val.surname}`;
 				}
 			});
-			const self = this;
+			// const self = this;
 			const table = {
 				localId: "table",
 				view: "datatable",
@@ -69,7 +70,7 @@ export default class ActivitiesView extends JetView {
 					}
 				},
 				columns: [
-					{id: "completed", header: "", template: "{common.checkbox()}", minWidth: 150},
+					{id: "completed", header: "", template: "{common.checkbox()}", width: 40},
 					{id: "typeId", header: ["Activity type", {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
 					{
 						id: "date",
@@ -104,7 +105,7 @@ export default class ActivitiesView extends JetView {
 				onClick: {
 					"wxi-pencil": (e, obj) => {
 						const item = activitiesCollection.getItem(obj);
-						showPopup(item, self.$$("table"));
+						this._activityPopup.showPopup(item);
 						return false;
 					},
 					"wxi-trash": (e, obj) => {
@@ -135,6 +136,7 @@ export default class ActivitiesView extends JetView {
 	}
 
 	init() {
+		this._activityPopup = this.ui(ActivityPopup);
 		try {
 			this.$$("table").sync(activitiesCollection);
 		}

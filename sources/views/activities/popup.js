@@ -16,7 +16,7 @@ const popup = webix.ui({
 		margin: 10,
 		elements: [
 			{type: "header", template: "Add activity", borderless: true, css: "popup-header", localId: "header"},
-			{view: "text", label: "Details", height: 70, name: "details"},
+			{view: "textarea", label: "Details", name: "details"},
 			{view: "combo", options: activityTypes, label: "Type", name: "typeId"},
 			{view: "combo", options: {body: {data: contactsCollection, template: "#name# #surname#"}}, label: "Contact", name: "contactId"},
 			{
@@ -52,7 +52,7 @@ const popup = webix.ui({
 						if (!form.validate()) {
 							return;
 						}
-						const values = webix.$$("popup_form").getValues();
+						const values = form.getValues();
 
 						if (values.date) {
 							const date = webix.Date.dateToStr("%Y-%m-%d")(values.date);

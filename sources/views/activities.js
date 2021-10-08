@@ -7,33 +7,6 @@ import ActivityPopup from "./activities/activityPopup";
 
 const dateFormat = "%d %F %Y";
 
-// function showPopup(object, table) {
-// 	const buttonName = object ? "Save" : "Add";
-// 	const popupHeader = object ? "Edit activity" : "Add activity";
-// 	if (object) {
-// 		const formatted = Object.assign({}, object);
-// 		if (formatted.date) {
-// 			formatted.time = formatted.date.substring(formatted.date.length - 5);
-// 		}
-// 		webix.$$("popup_form").setValues(formatted);
-// 	}
-// 	else if (table) {
-// 		table.unselectAll();
-// 	}
-
-// 	const button = popup.queryView({localId: "button_add"});
-// 	const header = popup.queryView({localId: "header"});
-
-// 	header.define("template", popupHeader);
-// 	button.define("label", buttonName);
-
-// 	header.refresh();
-// 	button.refresh();
-
-// 	popup.show();
-// }
-
-
 export default class ActivitiesView extends JetView {
 	config() {
 		return this.webix.promise.all([
@@ -53,12 +26,6 @@ export default class ActivitiesView extends JetView {
 				}
 			};
 
-			contactsCollection.data.each((val) => {
-				if (!val.value) {
-					val.value = `${val.name} ${val.surname}`;
-				}
-			});
-			// const self = this;
 			const table = {
 				localId: "table",
 				view: "datatable",

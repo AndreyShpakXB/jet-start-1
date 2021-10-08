@@ -1,4 +1,11 @@
 const contactsCollection = new webix.DataCollection({
+	scheme: {
+		$init(val) {
+			if (!val.value) {
+				val.value = `${val.name} ${val.surname}`;
+			}
+		}
+	},
 	data: [
 		{
 			id: 1,

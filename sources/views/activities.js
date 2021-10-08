@@ -31,25 +31,25 @@ export default class ActivitiesView extends JetView {
 				view: "datatable",
 				scheme: {
 					$init(obj) {
-						if (obj.date) {
-							obj.date = webix.Date.strToDate(dateFormat)(obj.date);
+						if (obj.DueDate) {
+							obj.DueDate = webix.Date.strToDate(dateFormat)(obj.DueDate);
 						}
 					}
 				},
 				columns: [
-					{id: "completed", header: "", template: "{common.checkbox()}", width: 40},
-					{id: "typeId", header: ["Activity type", {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
+					{id: "State", checkValue: "Close", uncheckValue: "Open", header: "", template: "{common.checkbox()}", width: 40},
+					{id: "TypeID", header: ["Activity type", {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
 					{
-						id: "date",
+						id: "DueDate",
 						minWidth: 150,
 						width: 250,
 						header: ["Due date", {content: "textFilter"}],
 						format: webix.Date.dateToStr(dateFormat),
 						sort: "date"
 					},
-					{id: "details", header: ["Details", {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
+					{id: "Details", header: ["Details", {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
 					{
-						id: "contactId",
+						id: "ContactID",
 						header: ["Contact", {content: "selectFilter"}],
 						minWidth: 150,
 						collection: contactsCollection,
@@ -82,11 +82,6 @@ export default class ActivitiesView extends JetView {
 						return false;
 					}
 				},
-				// on: {
-				// 	onCheck(id) {
-
-				// 	}
-				// },
 				select: "row"
 			};
 
@@ -103,11 +98,15 @@ export default class ActivitiesView extends JetView {
 
 	init() {
 		this._activityPopup = this.ui(ActivityPopup);
+		const table = this.$$("table");
 		try {
-			this.$$("table").sync(activitiesCollection);
+			table.sync(activitiesCollection);
 		}
 		catch (ex) {
 			this.webix.message({type: "error", text: ex.message});
 		}
+		this.on(this.app, "onTableActivitiesUpdated", () => {
+			table.filterByAll();
+		});
 	}
 }

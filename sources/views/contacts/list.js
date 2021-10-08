@@ -12,8 +12,8 @@ export default class ContactsListView extends JetView {
 			`<div style="display:flex;direction:column;align-items:center;">
 				<div class='user-icon'></div>
 				<div>
-					<div>#name# #surname#</div>
-					<div>#email#</div>
+					<div>#FirstName# #LastName#</div>
+					<div>#Email#</div>
 				</div>
 			</div>`,
 			type: {

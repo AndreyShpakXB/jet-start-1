@@ -20,12 +20,12 @@ export default class ActivityPopup extends JetView {
 				margin: 10,
 				elements: [
 					{type: "header", template: "Add activity", borderless: true, css: "popup-header", localId: "header"},
-					{view: "textarea", label: "Details", name: "details"},
-					{view: "combo", options: activityTypes, label: "Type", name: "typeId"},
-					{view: "combo", options: {body: {data: contactsCollection, template: "#name# #surname#"}}, label: "Contact", name: "contactId"},
+					{view: "textarea", label: "Details", name: "Details"},
+					{view: "combo", options: activityTypes, label: "Type", name: "TypeID"},
+					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: "Contact", name: "ContactID"},
 					{
 						cols: [
-							{view: "datepicker", label: "Date", name: "date", format: "%d %F %Y"},
+							{view: "datepicker", label: "Date", name: "DueDate", format: "%d %F %Y"},
 							{
 								view: "datepicker",
 								localId: "time",
@@ -44,7 +44,7 @@ export default class ActivityPopup extends JetView {
 							}
 						]
 					},
-					{view: "checkbox", label: "Completed", name: "completed"},
+					{view: "checkbox", label: "Comlpeted", name: "State", checkValue: "Close", uncheckValue: "Open"},
 					{cols: [
 						{},
 						{
@@ -58,11 +58,11 @@ export default class ActivityPopup extends JetView {
 								}
 								const values = form.getValues();
 
-								if (values.date) {
-									const date = webix.Date.dateToStr("%Y-%m-%d")(values.date);
+								if (values.DueDate) {
+									const date = webix.Date.dateToStr("%Y-%m-%d")(values.DueDate);
 									const time = webix.Date.dateToStr("%H:%i")(values.time);
 									const newDate = `${date} ${time}`;
-									values.date = newDate;
+									values.DueDate = newDate;
 								}
 
 								if (values.time) {
@@ -71,18 +71,26 @@ export default class ActivityPopup extends JetView {
 
 								if (!values.id) {
 									try {
-										activitiesCollection.add(values);
+										activitiesCollection.waitSave(() => {
+											activitiesCollection.add(values);
+										}).then(() => {
+											this.$scope.app.callEvent("onTableActivitiesUpdated", []);
+										});
 									}
 									catch (ex) {
 										webix.message({type: "error", text: ex.message});
 									}
 								}
 								else {
-									activitiesCollection.updateItem(values.id, values);
+									activitiesCollection.waitSave(() => {
+										activitiesCollection.updateItem(values.id, values);
+									}).then(() => {
+										this.$scope.app.callEvent("onTableActivitiesUpdated", []);
+									});
 								}
 								form.clear();
 								form.clearValidation();
-								webix.$$("activity_popup").hide();
+								this.$scope.getRoot().hide();
 							}
 						},
 						{
@@ -92,14 +100,14 @@ export default class ActivityPopup extends JetView {
 								const form = webix.$$("popup_form");
 								form.clear();
 								form.clearValidation();
-								webix.$$("activity_popup").hide();
+								this.$scope.getRoot().hide();
 							}
 						}
 					]}
 				],
 				rules: {
-					typeId: this.webix.rules.isNotEmpty,
-					contactId: this.webix.rules.isNotEmpty
+					TypeID: this.webix.rules.isNotEmpty,
+					ContactID: this.webix.rules.isNotEmpty
 				}
 			}
 		};
@@ -118,8 +126,8 @@ export default class ActivityPopup extends JetView {
 		const popupHeader = object ? "Edit activity" : "Add activity";
 		if (object) {
 			const formatted = Object.assign({}, object);
-			if (formatted.date) {
-				formatted.time = formatted.date.substring(formatted.date.length - 5);
+			if (formatted.DueDate) {
+				formatted.time = formatted.DueDate.substring(formatted.DueDate.length - 5);
 			}
 			webix.$$("popup_form").setValues(formatted);
 		}

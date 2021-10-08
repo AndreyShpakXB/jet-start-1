@@ -24,21 +24,21 @@ export default class ContactInfoView extends JetView {
 		const firstCol = {
 			rows: [
 				{view: "template", localId: "image", css: "contact-image", template: "Image"},
-				{view: "label", localId: "status", label: "Status", css: "status", width: w}
+				{view: "label", localId: "StatusID", label: "Status", css: "status", width: w}
 			]
 		};
 		const secondCol = {
 			rows: [
-				{view: "label", localId: "email", label: "Email", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-envelope")},
-				{view: "label", localId: "skype", label: "Skype", height: h, width: w, css: "label-info", template: this.createIconTemplate("fab fa-skype")},
-				{view: "label", localId: "job", label: "Job", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-tag")},
-				{view: "label", localId: "company", label: "Company", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-building")}
+				{view: "label", localId: "Email", label: "Email", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-envelope")},
+				{view: "label", localId: "Skype", label: "Skype", height: h, width: w, css: "label-info", template: this.createIconTemplate("fab fa-skype")},
+				{view: "label", localId: "Job", label: "Job", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-tag")},
+				{view: "label", localId: "Company", label: "Company", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-building")}
 			]
 		};
 		const thirdCol = {
 			rows: [
-				{view: "label", localId: "birthdate", label: "Date of birth", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-calendar-alt")},
-				{view: "label", localId: "location", label: "Location", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-map-marker-alt")}
+				{view: "label", localId: "Birthday", label: "Date of birth", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-calendar-alt")},
+				{view: "label", localId: "Address", label: "Location", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-map-marker-alt")}
 			]
 		};
 
@@ -77,18 +77,12 @@ export default class ContactInfoView extends JetView {
 			if (contact) {
 				this.showContact(contact);
 			}
-			else if (id) {
-				this.webix.message({
-					type: "error",
-					text: `Contact is not found. Id:${id}`
-				});
-			}
 		}
 	}
 
 	showContact(contact) {
 		const name = this.$$("name");
-		name.define("label", `${contact.name} ${contact.surname}`);
+		name.define("label", `${contact.FirstName} ${contact.LastName}`);
 		name.refresh();
 
 		const keys = Object.keys(contact).filter(key => key !== "id" && !key.includes("$") && key !== "name");

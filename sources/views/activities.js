@@ -17,7 +17,7 @@ export default class ActivitiesView extends JetView {
 				localId: "buttonAdd",
 				view: "button",
 				type: "icon",
-				icon: "fas fa-plus-square",
+				template: this.createButtonIconTemplate("fas fa-plus-square"),
 				label: "Add activity",
 				width: 150,
 				click() {
@@ -108,5 +108,13 @@ export default class ActivitiesView extends JetView {
 		this.on(this.app, "onTableActivitiesUpdated", () => {
 			table.filterByAll();
 		});
+	}
+
+	createButtonIconTemplate(icon) {
+		return `<button type="button" class="webix_button webix_img_btn" style="line-height:32px">
+					<div style='display:flex;align-items: center; justify-content: center'>
+						<span style='display:inline' class='${icon}'></span>&nbsp;#label#
+					</div>
+				</button>`;
 	}
 }

@@ -71,8 +71,7 @@ export default class ActivitiesView extends JetView {
 				],
 				onClick: {
 					"wxi-pencil": (e, obj) => {
-						const item = activitiesCollection.getItem(obj);
-						this._activityPopup.showPopup(item);
+						this._activityPopup.showPopup(obj);
 						return false;
 					},
 					"wxi-trash": (e, obj) => {

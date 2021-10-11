@@ -117,7 +117,8 @@ export default class ActivityPopup extends JetView {
 		this.getRoot().close();
 	}
 
-	showPopup(object) {
+	showPopup(index) {
+		const object = activitiesCollection.getItem(index);
 		const popup = this.getRoot();
 		if (!popup) {
 			return;

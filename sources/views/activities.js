@@ -104,8 +104,8 @@ export default class ActivitiesView extends JetView {
 		catch (ex) {
 			this.webix.message({type: "error", text: ex.message});
 		}
-		this.on(this.app, "onTableActivitiesUpdated", () => {
-			table.filterByAll();
+		activitiesCollection.data.attachEvent("onStoreUpdated", () => {
+			table.filter();
 		});
 	}
 

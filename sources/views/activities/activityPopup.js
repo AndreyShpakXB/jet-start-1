@@ -104,11 +104,7 @@ export default class ActivityPopup extends JetView {
 			}
 		}
 		else {
-			activitiesCollection.waitSave(() => {
-				activitiesCollection.updateItem(values.id, values);
-			}).then(() => {
-				this.$scope.app.callEvent("onTableActivitiesUpdated", []);
-			});
+			activitiesCollection.updateItem(values.id, values);
 		}
 		form.clear();
 		form.clearValidation();
@@ -131,8 +127,8 @@ export default class ActivityPopup extends JetView {
 			webix.$$("popup_form").setValues(formatted);
 		}
 
-		const button = popup.queryView({localId: "button_add"});
-		const header = popup.queryView({localId: "header"});
+		const button = this.$$("button_add");
+		const header = this.$$("header");
 
 		header.define("template", popupHeader);
 		button.define("label", buttonName);

@@ -12,6 +12,7 @@ export default class ActivityPopup extends JetView {
 			view: "window",
 			width: 600,
 			position: "center",
+			head: {template: "Add", localId: "header"},
 			body: {
 				view: "form",
 				id: "popup_form",
@@ -19,7 +20,6 @@ export default class ActivityPopup extends JetView {
 				padding: 10,
 				margin: 10,
 				elements: [
-					{type: "header", template: "Add activity", borderless: true, css: "popup-header", localId: "header"},
 					{view: "textarea", label: "Details", name: "Details"},
 					{view: "combo", options: activityTypes, label: "Type", name: "TypeID"},
 					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: "Contact", name: "ContactID"},

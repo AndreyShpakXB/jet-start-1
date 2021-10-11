@@ -51,47 +51,7 @@ export default class ActivityPopup extends JetView {
 							view: "button",
 							label: "Add",
 							localId: "button_add",
-							click() {
-								const form = webix.$$("popup_form");
-								if (!form.validate()) {
-									return;
-								}
-								const values = form.getValues();
-
-								if (values.DueDate) {
-									const date = webix.Date.dateToStr("%Y-%m-%d")(values.DueDate);
-									const time = webix.Date.dateToStr("%H:%i")(values.time);
-									const newDate = `${date} ${time}`;
-									values.DueDate = newDate;
-								}
-
-								if (values.time) {
-									delete values.time;
-								}
-
-								if (!values.id) {
-									try {
-										activitiesCollection.waitSave(() => {
-											activitiesCollection.add(values);
-										}).then(() => {
-											this.$scope.app.callEvent("onTableActivitiesUpdated", []);
-										});
-									}
-									catch (ex) {
-										webix.message({type: "error", text: ex.message});
-									}
-								}
-								else {
-									activitiesCollection.waitSave(() => {
-										activitiesCollection.updateItem(values.id, values);
-									}).then(() => {
-										this.$scope.app.callEvent("onTableActivitiesUpdated", []);
-									});
-								}
-								form.clear();
-								form.clearValidation();
-								this.$scope.getRoot().hide();
-							}
+							click: this.buttonAddClick
 						},
 						{
 							view: "button",
@@ -111,6 +71,48 @@ export default class ActivityPopup extends JetView {
 				}
 			}
 		};
+	}
+
+	buttonAddClick() {
+		const form = webix.$$("popup_form");
+		if (!form.validate()) {
+			return;
+		}
+		const values = form.getValues();
+
+		if (values.DueDate) {
+			const date = webix.Date.dateToStr("%Y-%m-%d")(values.DueDate);
+			const time = webix.Date.dateToStr("%H:%i")(values.time);
+			const newDate = `${date} ${time}`;
+			values.DueDate = newDate;
+		}
+
+		if (values.time) {
+			delete values.time;
+		}
+
+		if (!values.id) {
+			try {
+				activitiesCollection.waitSave(() => {
+					activitiesCollection.add(values);
+				}).then(() => {
+					this.$scope.app.callEvent("onTableActivitiesUpdated", []);
+				});
+			}
+			catch (ex) {
+				webix.message({type: "error", text: ex.message});
+			}
+		}
+		else {
+			activitiesCollection.waitSave(() => {
+				activitiesCollection.updateItem(values.id, values);
+			}).then(() => {
+				this.$scope.app.callEvent("onTableActivitiesUpdated", []);
+			});
+		}
+		form.clear();
+		form.clearValidation();
+		this.$scope.getRoot().hide();
 	}
 
 	destroy() {

@@ -32,7 +32,7 @@ export default class ActivityPopup extends JetView {
 								localId: "time",
 								width: 300,
 								type: "time",
-								value: "10:00",
+								value: "12:00 AM",
 								label: "Time",
 								labelWidth: 100,
 								suggest: {

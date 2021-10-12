@@ -16,7 +16,7 @@ export default class ContactInfoView extends JetView {
 						css: "background-color: white;",
 						cols: [
 							{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash"},
-							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil"}
+							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this.contactId}`)}
 						]
 					}
 				]
@@ -75,9 +75,9 @@ export default class ContactInfoView extends JetView {
 	}
 
 	urlChange(view, url) {
-		if (url[0].page === "contacts") {
-			const id = url[0].params.id;
-			const contact = contactsCollection.getItem(id);
+		if (url[0].page === "contacts.info") {
+			this.contactId = url[0].params.id;
+			const contact = contactsCollection.getItem(this.contactId);
 			if (contact) {
 				this.showContact(contact);
 			}

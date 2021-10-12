@@ -56,3 +56,51 @@
 	font-size:20px;
 	vertical-align:middle;
 }
+.label-info-name .webix_el_box{
+	font-size: 25px;
+}
+.page-background {
+	background-color: white;
+}
+
+.app-title {
+	font-size: 20px;
+}
+.user-icon {
+	width: 40px;
+	height: 40px;
+	border-radius: 100%;
+	border: 1px solid lightgray; 
+	margin: 0 15px 0 0;
+}
+
+.label-info{
+	font-size: 17px;
+	display: flex;
+	align-items: center;
+}
+
+.contact-image {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	background-color: rgb(241, 240, 240);
+	border: 1px solid #e1e1e2;
+}
+.contact-image .webix_template {
+	height: 40px;
+}
+
+.status {
+	font-size: 17px;
+	text-align: center;
+}
+
+.popup-header .webix_template {
+	font-size: 25px;
+	text-align: center;
+}
+
+.list-icon {
+	margin: 10 0 0 10;
+}

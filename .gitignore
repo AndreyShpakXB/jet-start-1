@@ -3,3 +3,5 @@ codebase/
 node_modules/
 *.log
 dist/
+backend/
+

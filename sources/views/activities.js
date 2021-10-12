@@ -35,13 +35,17 @@ export default class ActivitiesView extends JetView {
 						id: "DueDate",
 						minWidth: 150,
 						width: 250,
-						header: ["Due date", {content: "datepickerFilter",
-							inputConfig: {format: webix.Date.dateToStr(dateFormat)},
-							compare(cell, filter) {
-								return 	cell.getDate() === filter.getDate() &&
-									cell.getFullYear() === filter.getFullYear() &&
-									cell.getMonth() === filter.getMonth();
-							}}],
+						header: [
+							"Due date",
+							{
+								content: "datepickerFilter",
+								inputConfig: {format: webix.Date.dateToStr(dateFormat)},
+								compare(cell, filter) {
+									const date1 = webix.Date.dayStart(cell).getTime();
+									const date2 = webix.Date.dayStart(filter).getTime();
+									return date1 === date2;
+								}
+							}],
 						sort: "date",
 						format: webix.Date.dateToStr(dateFormat)
 					},

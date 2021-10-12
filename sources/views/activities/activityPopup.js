@@ -8,7 +8,7 @@ import contactsCollection from "../../models/contacts";
 export default class ActivityPopup extends JetView {
 	config() {
 		return {
-			id: "activity_popup",
+			localId: "activity_popup",
 			modal: true,
 			view: "window",
 			width: 600,
@@ -16,7 +16,7 @@ export default class ActivityPopup extends JetView {
 			head: {template: "Add", localId: "header"},
 			body: {
 				view: "form",
-				id: "popup_form",
+				localId: "popup_form",
 				align: "center",
 				padding: 10,
 				margin: 10,

@@ -51,6 +51,11 @@ export default class ContactInfoView extends JetView {
 				borderless: true
 			};
 
+			const tabs = {
+				view: "tabbar",
+				options: ["Activities", "Files"]
+			};
+
 			const content = {
 				cols: [
 					firstCol,
@@ -68,6 +73,8 @@ export default class ContactInfoView extends JetView {
 				rows: [
 					header,
 					content,
+					{height: 50},
+					tabs,
 					{}
 				]
 			};

@@ -1,5 +1,6 @@
 import {JetView} from "webix-jet";
 
+import {dateFormat} from "../../helpers";
 import activitiesCollection from "../../models/activities";
 import activityTypes from "../../models/activityTypes";
 import contactsCollection from "../../models/contacts";
@@ -25,7 +26,7 @@ export default class ActivityPopup extends JetView {
 					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: "Contact", name: "ContactID"},
 					{
 						cols: [
-							{view: "datepicker", label: "Date", name: "DueDate", format: "%d %F %Y"},
+							{view: "datepicker", label: "Date", name: "DueDate", format: dateFormat},
 							{
 								view: "datepicker",
 								localId: "time",
@@ -51,16 +52,16 @@ export default class ActivityPopup extends JetView {
 							view: "button",
 							label: "Add",
 							localId: "button_add",
-							click: this.buttonAddClick
+							click: () => this.buttonAddClick()
 						},
 						{
 							view: "button",
 							label: "Cancel",
-							click() {
-								const form = webix.$$("popup_form");
+							click: () => {
+								const form = this.$$("popup_form");
 								form.clear();
 								form.clearValidation();
-								this.$scope.getRoot().hide();
+								this.getRoot().hide();
 							}
 						}
 					]}
@@ -74,17 +75,15 @@ export default class ActivityPopup extends JetView {
 	}
 
 	buttonAddClick() {
-		const form = webix.$$("popup_form");
+		const form = this.$$("popup_form");
 		if (!form.validate()) {
 			return;
 		}
 		const values = form.getValues();
 
-		if (values.DueDate) {
-			const date = webix.Date.dateToStr("%Y-%m-%d")(values.DueDate);
-			const time = webix.Date.dateToStr("%H:%i")(values.time);
-			const newDate = `${date} ${time}`;
-			values.DueDate = newDate;
+		if (values.DueDate && values.time) {
+			const time = values.time.getTime();
+			values.DueDate.setTime(time);
 		}
 
 		if (values.time) {
@@ -93,11 +92,7 @@ export default class ActivityPopup extends JetView {
 
 		if (!values.id) {
 			try {
-				activitiesCollection.waitSave(() => {
-					activitiesCollection.add(values);
-				}).then(() => {
-					this.$scope.app.callEvent("onTableActivitiesUpdated", []);
-				});
+				activitiesCollection.add(values);
 			}
 			catch (ex) {
 				webix.message({type: "error", text: ex.message});
@@ -108,7 +103,7 @@ export default class ActivityPopup extends JetView {
 		}
 		form.clear();
 		form.clearValidation();
-		this.$scope.getRoot().hide();
+		this.getRoot().hide();
 	}
 
 	showPopup(index) {
@@ -120,11 +115,7 @@ export default class ActivityPopup extends JetView {
 		const buttonName = object ? "Save" : "Add";
 		const popupHeader = object ? "Edit activity" : "Add activity";
 		if (object) {
-			const formatted = Object.assign({}, object);
-			if (formatted.DueDate) {
-				formatted.time = formatted.DueDate.substring(formatted.DueDate.length - 5);
-			}
-			webix.$$("popup_form").setValues(formatted);
+			this.$$("popup_form").setValues(object);
 		}
 
 		const button = this.$$("button_add");

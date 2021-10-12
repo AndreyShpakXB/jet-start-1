@@ -1,11 +1,10 @@
 import {JetView} from "webix-jet";
 
+import {dateFormat, serverFormat} from "../helpers";
 import activitiesCollection from "../models/activities";
 import activityTypes from "../models/activityTypes";
 import contactsCollection from "../models/contacts";
 import ActivityPopup from "./activities/activityPopup";
-
-const dateFormat = "%d %F %Y";
 
 export default class ActivitiesView extends JetView {
 	config() {
@@ -20,22 +19,15 @@ export default class ActivitiesView extends JetView {
 				template: this.createButtonIconTemplate("fas fa-plus-square"),
 				label: "Add activity",
 				width: 150,
-				click() {
-					this.$scope.$$("table").unselectAll();
-					this.$scope._activityPopup.showPopup(null);
+				click: () => {
+					this.$$("table").unselectAll();
+					this._activityPopup.showPopup(null);
 				}
 			};
 
 			const table = {
 				localId: "table",
 				view: "datatable",
-				scheme: {
-					$init(obj) {
-						if (obj.DueDate) {
-							obj.DueDate = webix.Date.strToDate(dateFormat)(obj.DueDate);
-						}
-					}
-				},
 				columns: [
 					{id: "State", checkValue: "Close", uncheckValue: "Open", header: "", template: "{common.checkbox()}", width: 40},
 					{id: "TypeID", header: ["Activity type", {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
@@ -44,8 +36,8 @@ export default class ActivitiesView extends JetView {
 						minWidth: 150,
 						width: 250,
 						header: ["Due date", {content: "datepickerFilter", inputConfig: {format: webix.Date.dateToStr(dateFormat)}}],
-						format: webix.Date.dateToStr(dateFormat),
-						sort: "date"
+						sort: "date",
+						format: webix.Date.dateToStr(dateFormat)
 					},
 					{id: "Details", header: ["Details", {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
 					{
@@ -104,9 +96,16 @@ export default class ActivitiesView extends JetView {
 		catch (ex) {
 			this.webix.message({type: "error", text: ex.message});
 		}
-		activitiesCollection.data.attachEvent("onStoreUpdated", () => {
+		this.on(activitiesCollection.data, "onStoreUpdated", () => {
 			table.filterByAll();
 		});
+		const processor = webix.dp(activitiesCollection);
+		if (processor) {
+			processor.attachEvent("onBeforeDataSend",
+			(details) => {
+				details.data.DueDate = webix.Date.dateToStr(serverFormat)(details.data.DueDate);
+			});
+		}
 	}
 
 	createButtonIconTemplate(icon) {

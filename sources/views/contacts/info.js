@@ -2,7 +2,7 @@ import {JetView} from "webix-jet";
 
 import contactsCollection from "../../models/contacts";
 import statusesCollection from "../../models/statuses";
-
+import ActivitiesTableView from "../activities/table";
 
 export default class ContactInfoView extends JetView {
 	config() {
@@ -51,9 +51,36 @@ export default class ContactInfoView extends JetView {
 				borderless: true
 			};
 
+			this._table = new ActivitiesTableView(this.app, true);
+			const activitiesTab = {
+				id: "activitiesTab",
+				rows: [
+					this._table
+				]
+			};
+
+			const filesTab = {id: "filesTab", template: "template"};
+
 			const tabs = {
-				view: "tabbar",
-				options: ["Activities", "Files"]
+				rows: [
+					{
+						type: "clean",
+						rows: [
+							{
+								borderless: true,
+								view: "tabbar",
+								id: "tabbar",
+								value: "listView",
+								multiview: true,
+								options: [
+									{value: "Activities", id: "activitiesTab"},
+									{value: "Files", id: "filesTab"}
+								]
+							}
+						]
+					},
+					{animate: false, cells: [activitiesTab, filesTab]}
+				]
 			};
 
 			const content = {
@@ -74,8 +101,7 @@ export default class ContactInfoView extends JetView {
 					header,
 					content,
 					{height: 50},
-					tabs,
-					{}
+					tabs
 				]
 			};
 		});
@@ -83,15 +109,15 @@ export default class ContactInfoView extends JetView {
 
 	urlChange(view, url) {
 		if (url[0].page === "contacts.info") {
-			this.contactId = url[0].params.id;
-			const contact = contactsCollection.getItem(this.contactId);
-			if (contact) {
-				this.showContact(contact);
+			this._contactId = url[0].params.id;
+			if (this._contactId) {
+				this.showContact(this._contactId);
 			}
 		}
 	}
 
-	showContact(contact) {
+	showContact(id) {
+		const contact = contactsCollection.getItem(id);
 		const name = this.$$("name");
 		name.define("label", `${contact.FirstName} ${contact.LastName}`);
 		name.refresh();
@@ -110,6 +136,7 @@ export default class ContactInfoView extends JetView {
 				obj.refresh();
 			}
 		});
+		this._table.showData(this._contactId);
 	}
 
 	createIconTemplate(icon) {

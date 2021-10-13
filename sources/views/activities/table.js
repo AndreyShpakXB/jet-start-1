@@ -7,10 +7,13 @@ import contactsCollection from "../../models/contacts";
 import ActivityPopup from "./activityPopup";
 
 export default class ActivitiesTableView extends JetView {
-	constructor(app, contactId) {
+	constructor(app, hide) {
 		super(app);
-		if (contactId) {
-			this._contactId = contactId;
+		if (hide) {
+			this._hideData = true;
+		}
+		else {
+			this._hideData = false;
 		}
 	}
 
@@ -50,8 +53,7 @@ export default class ActivitiesTableView extends JetView {
 						minWidth: 150,
 						collection: contactsCollection,
 						fillspace: true,
-						sort: "text",
-						hidden: !!this._contactId
+						sort: "text"
 					},
 					{
 						id: "edit",
@@ -87,11 +89,9 @@ export default class ActivitiesTableView extends JetView {
 	init() {
 		this._activityPopup = this.ui(ActivityPopup);
 		const table = this.$$("table");
-		try {
+		if (!this._hideData) {
 			table.sync(activitiesCollection);
-		}
-		catch (ex) {
-			this.webix.message({type: "error", text: ex.message});
+			activitiesCollection.filter("ContactID", "");
 		}
 		this.on(activitiesCollection.data, "onStoreUpdated", () => {
 			table.filterByAll();
@@ -102,6 +102,28 @@ export default class ActivitiesTableView extends JetView {
 			(details) => {
 				details.data.DueDate = webix.Date.dateToStr(serverFormat)(details.data.DueDate);
 			});
+		}
+	}
+
+	showData(id) {
+		const table = this.$$("table");
+		if (id) {
+			if (!table.getColumnConfig("ContactID").hidden) {
+				table.hideColumn("ContactID");
+			}
+			activitiesCollection.filter("ContactID", id);
+		}
+		else {
+			activitiesCollection.filter("ContactID", "");
+		}
+		table.sync(activitiesCollection);
+		this._hideData = false;
+	}
+
+	clearContactId() {
+		const table = this.$$("table");
+		if (table.getColumnConfig("ContactID").hidden) {
+			table.showColumn("ContactID");
 		}
 	}
 

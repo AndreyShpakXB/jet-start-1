@@ -2,6 +2,7 @@ import {JetView} from "webix-jet";
 
 import contactsCollection from "../../models/contacts";
 import statusesCollection from "../../models/statuses";
+import ActivityPopup from "../activities/activityPopup";
 import ActivitiesTableView from "../activities/table";
 
 export default class ContactInfoView extends JetView {
@@ -45,17 +46,14 @@ export default class ContactInfoView extends JetView {
 				]
 			};
 
-			const space = {
-				view: "template",
-				width: 50,
-				borderless: true
-			};
+			const space = {view: "template", width: 50, borderless: true};
 
 			this._table = new ActivitiesTableView(this.app, true);
 			const activitiesTab = {
 				id: "activitiesTab",
 				rows: [
-					this._table
+					this._table,
+					{view: "button", label: "Add activity", click: () => this._activityPopup.showPopup({ContactID: this._contactId})}
 				]
 			};
 
@@ -105,6 +103,10 @@ export default class ContactInfoView extends JetView {
 				]
 			};
 		});
+	}
+
+	init() {
+		this._activityPopup = this.ui(ActivityPopup);
 	}
 
 	urlChange(view, url) {

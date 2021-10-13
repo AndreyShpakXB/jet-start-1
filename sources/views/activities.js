@@ -15,7 +15,7 @@ export default class ActivitiesView extends JetView {
 			width: 150,
 			click: () => {
 				this._table.unselectAll();
-				this._activityPopup.showPopup(null);
+				this._activityPopup.showPopup();
 			}
 		};
 

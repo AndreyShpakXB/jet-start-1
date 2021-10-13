@@ -108,8 +108,7 @@ export default class ActivityPopup extends JetView {
 		this.getRoot().hide();
 	}
 
-	showPopup(index) {
-		const object = activitiesCollection.getItem(index);
+	showPopup(object) {
 		const popup = this.getRoot();
 		if (!popup) {
 			return;
@@ -117,9 +116,11 @@ export default class ActivityPopup extends JetView {
 		const buttonName = object ? "Save" : "Add";
 		const popupHeader = object ? "Edit activity" : "Add activity";
 		if (object) {
-			const h = object.DueDate.getHours();
-			const m = object.DueDate.getMinutes();
-			object.time = `${h}:${m}`;
+			if (object.DueDate) {
+				const h = object.DueDate.getHours();
+				const m = object.DueDate.getMinutes();
+				object.time = `${h}:${m}`;
+			}
 			this.$$("popup_form").setValues(object);
 		}
 

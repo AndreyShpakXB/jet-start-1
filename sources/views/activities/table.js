@@ -70,7 +70,8 @@ export default class ActivitiesTableView extends JetView {
 				],
 				onClick: {
 					"wxi-pencil": (e, obj) => {
-						this._activityPopup.showPopup(obj);
+						const object = activitiesCollection.getItem(obj);
+						this._activityPopup.showPopup(object);
 						return false;
 					},
 					"wxi-trash": (e, obj) => {

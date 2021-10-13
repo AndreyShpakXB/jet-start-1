@@ -12,12 +12,12 @@ export default class ContactInfoView extends JetView {
 				padding: 10,
 				localId: "header",
 				cols: [
-					{view: "label", localId: "name", label: "Name Surname", css: "label-info-name"},
+					{view: "label", localId: "name", label: "", css: "label-info-name"},
 					{
 						css: "background-color: white;",
 						cols: [
-							{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash"},
-							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this.contactId}`)}
+							{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash", click: () => contactsCollection.remove(this._contactId)},
+							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this._contactId}`)}
 						]
 					}
 				]
@@ -28,21 +28,21 @@ export default class ContactInfoView extends JetView {
 			const firstCol = {
 				rows: [
 					{view: "template", localId: "image", css: "contact-image", template: "Image"},
-					{view: "label", localId: "StatusID", label: "Status", css: "status", width: w}
+					{view: "label", localId: "StatusID", label: "", css: "status", width: w}
 				]
 			};
 			const secondCol = {
 				rows: [
-					{view: "label", localId: "Email", label: "Email", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-envelope")},
-					{view: "label", localId: "Skype", label: "Skype", height: h, width: w, css: "label-info", template: this.createIconTemplate("fab fa-skype")},
-					{view: "label", localId: "Job", label: "Job", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-tag")},
-					{view: "label", localId: "Company", label: "Company", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-building")}
+					{view: "label", localId: "Email", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-envelope")},
+					{view: "label", localId: "Skype", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fab fa-skype")},
+					{view: "label", localId: "Job", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-tag")},
+					{view: "label", localId: "Company", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-building")}
 				]
 			};
 			const thirdCol = {
 				rows: [
-					{view: "label", localId: "Birthday", label: "Date of birth", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-calendar-alt")},
-					{view: "label", localId: "Address", label: "Location", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-map-marker-alt")}
+					{view: "label", localId: "Birthday", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-calendar-alt")},
+					{view: "label", localId: "Address", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-map-marker-alt")}
 				]
 			};
 
@@ -120,6 +120,9 @@ export default class ContactInfoView extends JetView {
 
 	showContact(id) {
 		const contact = contactsCollection.getItem(id);
+
+		if (!contact) return;
+
 		const name = this.$$("name");
 		name.define("label", `${contact.FirstName} ${contact.LastName}`);
 		name.refresh();
@@ -128,12 +131,15 @@ export default class ContactInfoView extends JetView {
 		keys.forEach((key) => {
 			const obj = this.$$(key);
 			if (obj) {
-				if (key === "StatusID") {
+				if (key === "StatusID" && +contact[key] !== 0 && contact[key]) {
 					const status = statusesCollection.getItem(contact[key]).Value;
 					obj.define("label", status);
 				}
 				else {
 					obj.define("label", contact[key]);
+				}
+				if (key === "Birthday" && contact[key].length > 10) {
+					obj.define("label", contact.Birthday.substring(0, contact.Birthday.length - 6));
 				}
 				obj.refresh();
 			}

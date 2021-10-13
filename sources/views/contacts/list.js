@@ -28,7 +28,10 @@ export default class ContactsListView extends JetView {
 		const button = {
 			view: "button",
 			label: "Add contact",
-			click: () => this.show("./contacts.details")
+			click: () => {
+				this.show("./contacts.details");
+				this.$$("list").unselectAll();
+			}
 		};
 
 		const ui = {
@@ -41,10 +44,14 @@ export default class ContactsListView extends JetView {
 	}
 
 	init() {
+		const list = this.$$("list");
 		contactsCollection.waitData.then(() => {
-			const list = this.$$("list");
 			list.parse(contactsCollection);
 			list.select(contactsCollection.getFirstId());
+		});
+		this.on(this.app, "onContactItemSelect", (id) => {
+			this.show(`./contacts.info?id=${id}`);
+			list.select(id);
 		});
 	}
 }

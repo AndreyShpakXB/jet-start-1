@@ -98,7 +98,7 @@ export default class ActivitiesTableView extends JetView {
 			table.filterByAll();
 		});
 		const processor = webix.dp(activitiesCollection);
-		if (processor) {
+		if (processor && !processor.hasEvent("onBeforeDataSend")) {
 			processor.attachEvent("onBeforeDataSend",
 			(details) => {
 				details.data.DueDate = webix.Date.dateToStr(serverFormat)(details.data.DueDate);

@@ -1,5 +1,6 @@
 import {JetView} from "webix-jet";
 
+import {dateFormtM, serverFormat} from "../../helpers";
 import contactsCollection from "../../models/contacts";
 import statusesCollection from "../../models/statuses";
 
@@ -15,7 +16,7 @@ export default class DetailsView extends JetView {
 			rows: [
 				{view: "text", label: "First name", name: "FirstName", maxWidth, labelWidth},
 				{view: "text", label: "Last name", name: "LastName", maxWidth, labelWidth},
-				{view: "datepicker", label: "Joining date", name: "StartDate", maxWidth, labelWidth},
+				{view: "datepicker", label: "Joining date", name: "StartDate", maxWidth, labelWidth, format: dateFormtM},
 				{view: "combo", label: "Status", name: "StatusID", maxWidth, labelWidth, options: {body: {data: statusesCollection, template: "#Value#"}}},
 				{view: "text", label: "Job", name: "Job", maxWidth, labelWidth},
 				{view: "text", label: "Company", name: "Company", maxWidth, labelWidth},
@@ -31,7 +32,7 @@ export default class DetailsView extends JetView {
 				{view: "text", label: "Email", name: "Email", maxWidth, labelWidth},
 				{view: "text", label: "Skype", name: "Skype", maxWidth, labelWidth},
 				{view: "text", label: "Phone", name: "Phone", maxWidth, labelWidth},
-				{view: "datepicker", label: "Birthday", name: "Birthday", maxWidth, labelWidth},
+				{view: "datepicker", label: "Birthday", name: "Birthday", maxWidth, labelWidth, format: dateFormtM},
 				{
 					borderless: true,
 					cols: [
@@ -53,8 +54,38 @@ export default class DetailsView extends JetView {
 		const buttons = {
 			cols: [
 				{},
-				{view: "button", label: "Cancel", width: 100},
-				{view: "button", label: "Save", width: 150, localId: "button_add"}
+				{
+					view: "button",
+					label: "Cancel",
+					width: 100,
+					click: () => {
+						this.app.callEvent("onContactItemSelect", [this._contactId]);
+					}
+				},
+				{
+					view: "button",
+					label: "Save",
+					width: 150,
+					localId: "button_add",
+					click: () => {
+						const form = this.$$("form");
+						const object = form.getValues();
+
+						if (!form.validate()) return;
+
+						const formatter = webix.Date.dateToStr(serverFormat);
+						object.StartDate = formatter(object.StartDate);
+						object.Birthday = formatter(object.Birthday);
+
+						if (object.id) {
+							contactsCollection.updateItem(object.id, object);
+						}
+						else {
+							contactsCollection.add(object);
+						}
+						this.app.callEvent("onContactItemSelect", [object.id]);
+					}
+				}
 			]
 		};
 
@@ -66,7 +97,12 @@ export default class DetailsView extends JetView {
 				{},
 				buttons
 			],
-			borderless: true
+			borderless: true,
+			rules: {
+				FirstName: this.webix.rules.isNotEmpty,
+				LastName: this.webix.rules.isNotEmpty,
+				Email: this.webix.rules.isNotEmpty
+			}
 		};
 
 		return {padding: 15, rows: [header, form]};
@@ -77,10 +113,11 @@ export default class DetailsView extends JetView {
 			if (!url[0].params.id) {
 				this.$$("form").clear();
 				this.showAsAddingForm();
+				this._contactId = contactsCollection.getFirstId();
 			}
 			else {
-				this.contactId = url[0].params.id;
-				const contact = contactsCollection.getItem(this.contactId);
+				this._contactId = url[0].params.id;
+				const contact = contactsCollection.getItem(this._contactId);
 				if (contact) {
 					this.setValues(contact);
 				}
@@ -102,4 +139,3 @@ export default class DetailsView extends JetView {
 		button.refresh();
 	}
 }
-

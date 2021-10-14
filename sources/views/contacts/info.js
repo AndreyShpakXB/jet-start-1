@@ -1,9 +1,11 @@
 import {JetView} from "webix-jet";
 
 import contactsCollection from "../../models/contacts";
+import filesCollection from "../../models/files";
 import statusesCollection from "../../models/statuses";
 import ActivityPopup from "../activities/activityPopup";
 import ActivitiesTableView from "../activities/table";
+import FilesTableView from "./files";
 
 export default class ContactInfoView extends JetView {
 	config() {
@@ -59,16 +61,30 @@ export default class ContactInfoView extends JetView {
 
 			const space = {view: "template", width: 50, borderless: true};
 
-			this._table = new ActivitiesTableView(this.app, true);
+			this._tableActivities = new ActivitiesTableView(this.app, true);
 			const activitiesTab = {
 				id: "activitiesTab",
 				rows: [
-					this._table,
+					this._tableActivities,
 					{view: "button", label: "Add activity", click: () => this._activityPopup.showPopup({ContactID: this._contactId})}
 				]
 			};
 
-			const filesTab = {id: "filesTab", template: "template"};
+
+			this._tableFiles = new FilesTableView(this.app);
+			const uploader = {
+				view: "uploader",
+				localId: "uploader",
+				label: "Upload",
+				autosend: false
+			};
+			const filesTab = {
+				id: "filesTab",
+				rows: [
+					this._tableFiles,
+					uploader
+				]
+			};
 
 			const tabs = {
 				rows: [
@@ -118,6 +134,19 @@ export default class ContactInfoView extends JetView {
 
 	init() {
 		this._activityPopup = this.ui(ActivityPopup);
+		const uploader = this.$$("uploader");
+		uploader.attachEvent("onAfterFileAdd", () => {
+			uploader.files.data.each((file) => {
+				const fileObject = {
+					name: file.name,
+					lastModifiedDate: file.file.lastModifiedDate,
+					size: file.sizetext,
+					contactId: this._contactId
+				};
+				filesCollection.add(fileObject);
+			});
+			uploader.files.data.clearAll();
+		});
 	}
 
 	urlChange(view, url) {
@@ -125,6 +154,7 @@ export default class ContactInfoView extends JetView {
 			this._contactId = url[0].params.id;
 			if (this._contactId) {
 				this.showContact(this._contactId);
+				filesCollection.filter("contactId", this._contactId);
 			}
 		}
 	}
@@ -155,7 +185,7 @@ export default class ContactInfoView extends JetView {
 				obj.refresh();
 			}
 		});
-		this._table.showData(this._contactId);
+		this._tableActivities.showData(this._contactId);
 	}
 
 	createIconTemplate(icon) {

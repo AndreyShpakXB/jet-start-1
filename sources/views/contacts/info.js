@@ -16,7 +16,18 @@ export default class ContactInfoView extends JetView {
 					{
 						css: "background-color: white;",
 						cols: [
-							{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash", click: () => contactsCollection.remove(this._contactId)},
+							{
+								view: "button",
+								label: "Delete",
+								width: 150,
+								type: "icon",
+								icon: "wxi wxi-trash",
+								click: () => {
+									webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
+										contactsCollection.remove(this._contactId);
+									});
+								}
+							},
 							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this._contactId}`)}
 						]
 					}
@@ -151,5 +162,11 @@ export default class ContactInfoView extends JetView {
 		return `<div style='display:flex;align-items: center;;'>
 					<span style='display:inline' class='${icon}'></span>&nbsp;#label#
 				</div>`;
+	}
+
+	_removeContact() {
+		webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
+			contactsCollection.remove(self._contactId);
+		});
 	}
 }

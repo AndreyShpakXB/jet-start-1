@@ -82,6 +82,13 @@ export default class ActivitiesTableView extends JetView {
 		}
 	}
 
+	urlChange(view, url) {
+		if (url[0].page === "contacts.info") {
+			const id = this.getParam("id");
+			this.showData(id);
+		}
+	}
+
 	onEdit(e, obj) {
 		const object = activitiesCollection.getItem(obj);
 		if (this.$scope._hideData) {
@@ -105,24 +112,19 @@ export default class ActivitiesTableView extends JetView {
 	}
 
 	showData(id) {
-		const table = this.$$("table");
-		if (id) {
-			if (table.isColumnVisible("ContactID")) {
-				table.hideColumn("ContactID");
+		activitiesCollection.waitData.then(() => {
+			const table = this.$$("table");
+			if (id) {
+				if (table.isColumnVisible("ContactID")) {
+					table.hideColumn("ContactID");
+				}
+				activitiesCollection.filter(obj => +obj.ContactID === +id);
 			}
-			activitiesCollection.filter("ContactID", id);
-		}
-		else {
-			activitiesCollection.filter("ContactID", "");
-		}
-		table.sync(activitiesCollection);
-		table.filterByAll();
-	}
-
-	clearContactId() {
-		const table = this.$$("table");
-		if (!table.isColumnVisible("ContactID")) {
-			table.showColumn("ContactID");
-		}
+			else {
+				activitiesCollection.filter("ContactID", "");
+			}
+			table.sync(activitiesCollection);
+			table.filterByAll();
+		});
 	}
 }

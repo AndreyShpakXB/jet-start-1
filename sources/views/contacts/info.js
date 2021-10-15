@@ -1,5 +1,6 @@
 import {JetView} from "webix-jet";
 
+import activitiesCollection from "../../models/activities";
 import contactsCollection from "../../models/contacts";
 import filesCollection from "../../models/files";
 import statusesCollection from "../../models/statuses";
@@ -57,11 +58,10 @@ export default class ContactInfoView extends JetView {
 
 			const space = {view: "template", width: 50, borderless: true};
 
-			this._tableActivities = new ActivitiesTableView(this.app, true);
 			const activitiesTab = {
 				id: "activitiesTab",
 				rows: [
-					this._tableActivities,
+					new ActivitiesTableView(this.app, true),
 					{view: "button", label: "Add activity", click: () => this._activityPopup.showPopup({ContactID: this._contactId})}
 				]
 			};
@@ -147,7 +147,7 @@ export default class ContactInfoView extends JetView {
 
 	urlChange(view, url) {
 		if (url[0].page === "contacts.info") {
-			this._contactId = url[0].params.id;
+			this._contactId = this.getParam("id");
 			if (this._contactId) {
 				if (contactsCollection.exists(this._contactId)) {
 					this.showContact(this._contactId);
@@ -162,7 +162,15 @@ export default class ContactInfoView extends JetView {
 
 	onDelete() {
 		webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
-			contactsCollection.remove(this.$scope._contactId);
+			const id = +this.$scope._contactId;
+			const toRemove = [];
+			activitiesCollection.data.each((obj) => {
+				if (obj.ContactID === id) {
+					toRemove.push(obj.id);
+				}
+			});
+			activitiesCollection.remove(toRemove);
+			contactsCollection.remove(id);
 			this.$scope.app.callEvent("onAfterContactDeleted", [contactsCollection.getFirstId()]);
 		});
 	}
@@ -196,18 +204,11 @@ export default class ContactInfoView extends JetView {
 				obj.refresh();
 			}
 		});
-		this._tableActivities.showData(this._contactId);
 	}
 
 	createIconTemplate(icon) {
 		return `<div style='display:flex;align-items: center;;'>
 					<span style='display:inline' class='${icon}'></span>&nbsp;#label#
 				</div>`;
-	}
-
-	_removeContact() {
-		webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
-			contactsCollection.remove(self._contactId);
-		});
 	}
 }

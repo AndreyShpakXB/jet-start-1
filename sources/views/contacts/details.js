@@ -36,14 +36,20 @@ export default class DetailsView extends JetView {
 				{
 					borderless: true,
 					cols: [
-						{view: "template", localId: "image", css: "contact-image", template: "Image", height: 200},
+						{view: "template", localId: "image", css: "contact-image", template: "<img src='#src#'></img>", height: 200},
 						{
 							margin: 10,
 							paddingX: 10,
 							rows: [
 								{},
-								{view: "button", label: "Change photo", width: 150},
-								{view: "button", label: "Delete photo", width: 150}
+								{
+									view: "uploader",
+									localId: "uploader",
+									label: "Change photo",
+									autosend: false,
+									width: 150
+								},
+								{view: "button", label: "Delete photo", width: 150, click: this.onPhotoDelete}
 							]
 						}
 					]
@@ -90,6 +96,30 @@ export default class DetailsView extends JetView {
 		return {padding: 15, rows: [header, form]};
 	}
 
+	init() {
+		const uploader = this.$$("uploader");
+		uploader.attachEvent("onAfterFileAdd", () => {
+			const fileId = uploader.files.getFirstId();
+			const file = uploader.files.getItem(fileId).file;
+
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => {
+				const dataUrl = reader.result;
+				const toUpdate = contactsCollection.getItem(this._contactId);
+				toUpdate.Photo = dataUrl;
+
+				contactsCollection.updateItem(this._contactId, toUpdate);
+
+				this.$$("image").define("src", file);
+			};
+			reader.onerror = (error) => {
+				this.webix.message({type: "error", text: error});
+			};
+			uploader.files.data.clearAll();
+		});
+	}
+
 	urlChange(view, url) {
 		if (url[0].page === "contacts.details") {
 			if (!url[0].params.id) {
@@ -104,6 +134,21 @@ export default class DetailsView extends JetView {
 					this.setValues(contact);
 				}
 			}
+		}
+	}
+
+	onPhotoDelete() {
+		const item = contactsCollection.getItem(this.$scope._contactId);
+		if (item) {
+			item.Photo = "";
+			contactsCollection.waitSave(() => {
+				contactsCollection.updateItem(this.$scope._contactId, item);
+			}).then(() => {
+				this.$scope.webix.message("Photo deleted!");
+			});
+		}
+		else {
+			this.$scope.webix.message({type: "error", text: "load error"});
 		}
 	}
 

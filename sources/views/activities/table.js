@@ -130,8 +130,4 @@ export default class ActivitiesTableView extends JetView {
 			table.showColumn("ContactID");
 		}
 	}
-
-	unselectAll() {
-		this.$$("table").unselectAll();
-	}
 }

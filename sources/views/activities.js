@@ -5,7 +5,6 @@ import ActivitiesTableView from "./activities/table";
 
 export default class ActivitiesView extends JetView {
 	config() {
-		this._table = new ActivitiesTableView(this.app);
 		const addButton = {
 			localId: "buttonAdd",
 			view: "button",
@@ -14,7 +13,6 @@ export default class ActivitiesView extends JetView {
 			label: "Add activity",
 			width: 150,
 			click: () => {
-				this._table.unselectAll();
 				this._activityPopup.showPopup();
 			}
 		};
@@ -24,7 +22,7 @@ export default class ActivitiesView extends JetView {
 			padding: 10,
 			rows: [
 				{cols: [{}, addButton]},
-				this._table
+				ActivitiesTableView
 			]
 		};
 	}

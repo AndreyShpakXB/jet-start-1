@@ -71,7 +71,6 @@ export default class ContactInfoView extends JetView {
 				]
 			};
 
-			this._tableFiles = new FilesTableView(this.app);
 			const uploader = {
 				view: "uploader",
 				localId: "uploader",
@@ -81,7 +80,7 @@ export default class ContactInfoView extends JetView {
 			const filesTab = {
 				id: "filesTab",
 				rows: [
-					this._tableFiles,
+					FilesTableView,
 					uploader
 				]
 			};
@@ -134,6 +133,7 @@ export default class ContactInfoView extends JetView {
 
 	init() {
 		this._activityPopup = this.ui(ActivityPopup);
+		this._activityPopup.disableContactCombo();
 		const uploader = this.$$("uploader");
 		uploader.attachEvent("onAfterFileAdd", () => {
 			uploader.files.data.each((file) => {

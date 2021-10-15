@@ -121,6 +121,7 @@ export default class ActivitiesTableView extends JetView {
 			activitiesCollection.filter("ContactID", "");
 		}
 		table.sync(activitiesCollection);
+		table.filterByAll();
 	}
 
 	clearContactId() {

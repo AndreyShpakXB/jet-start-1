@@ -154,7 +154,7 @@ export default class ContactInfoView extends JetView {
 			this._contactId = url[0].params.id;
 			if (this._contactId) {
 				this.showContact(this._contactId);
-				filesCollection.filter("contactId", this._contactId);
+				filesCollection.filter("TypeID", this._contactId);
 			}
 		}
 	}

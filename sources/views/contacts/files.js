@@ -1,6 +1,6 @@
 import {JetView} from "webix-jet";
 
-import {dateFormat} from "../../helpers";
+import {DATE_FORMAT_F} from "../../helpers";
 import filesCollection from "../../models/files";
 
 export default class FilesTableView extends JetView {
@@ -10,7 +10,7 @@ export default class FilesTableView extends JetView {
 			view: "datatable",
 			columns: [
 				{id: "name", header: "Name", minWidth: 150, sort: "text", fillspace: true},
-				{id: "lastModifiedDate", header: "Change date", minWidth: 150, width: 250, sort: "date", format: webix.Date.dateToStr(dateFormat)},
+				{id: "lastModifiedDate", header: "Change date", minWidth: 150, width: 250, sort: "date", format: webix.Date.dateToStr(DATE_FORMAT_F)},
 				{id: "size", header: "Size", minWidth: 150, sort: "text"},
 				{id: "delete", header: "", template: "{common.trashIcon()}", width: 40}
 			],

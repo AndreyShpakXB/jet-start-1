@@ -1,6 +1,6 @@
 import {JetView} from "webix-jet";
 
-import {dateFormat, serverFormat} from "../../helpers";
+import {DATE_FORMAT_F, SERVER_FORMAT} from "../../helpers";
 import activitiesCollection from "../../models/activities";
 import activityTypes from "../../models/activityTypes";
 import contactsCollection from "../../models/contacts";
@@ -36,7 +36,7 @@ export default class ActivitiesTableView extends JetView {
 							"Due date",
 							{
 								content: "datepickerFilter",
-								inputConfig: {format: webix.Date.dateToStr(dateFormat)},
+								inputConfig: {format: webix.Date.dateToStr(DATE_FORMAT_F)},
 								compare(cell, filter) {
 									const date1 = webix.Date.dayStart(cell).getTime();
 									const date2 = webix.Date.dayStart(filter).getTime();
@@ -44,7 +44,7 @@ export default class ActivitiesTableView extends JetView {
 								}
 							}],
 						sort: "date",
-						format: webix.Date.dateToStr(dateFormat)
+						format: webix.Date.dateToStr(DATE_FORMAT_F)
 					},
 					{id: "Details", header: ["Details", {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
 					{
@@ -71,7 +71,10 @@ export default class ActivitiesTableView extends JetView {
 				onClick: {
 					"wxi-pencil": (e, obj) => {
 						const object = activitiesCollection.getItem(obj);
-						this._activityPopup.showPopup(object);
+						if (this._hideData) {
+							this._activityPopup.disableContactCombo();
+						}
+						this._activityPopup.showPopup(object, true);
 						return false;
 					},
 					"wxi-trash": (e, obj) => {
@@ -101,7 +104,7 @@ export default class ActivitiesTableView extends JetView {
 		if (processor && !processor.hasEvent("onBeforeDataSend")) {
 			processor.attachEvent("onBeforeDataSend",
 			(details) => {
-				details.data.DueDate = webix.Date.dateToStr(serverFormat)(details.data.DueDate);
+				details.data.DueDate = webix.Date.dateToStr(SERVER_FORMAT)(details.data.DueDate);
 			});
 		}
 	}
@@ -109,7 +112,7 @@ export default class ActivitiesTableView extends JetView {
 	showData(id) {
 		const table = this.$$("table");
 		if (id) {
-			if (!table.getColumnConfig("ContactID").hidden) {
+			if (table.isColumnVisible("ContactID")) {
 				table.hideColumn("ContactID");
 			}
 			activitiesCollection.filter("ContactID", id);
@@ -118,12 +121,11 @@ export default class ActivitiesTableView extends JetView {
 			activitiesCollection.filter("ContactID", "");
 		}
 		table.sync(activitiesCollection);
-		this._hideData = false;
 	}
 
 	clearContactId() {
 		const table = this.$$("table");
-		if (table.getColumnConfig("ContactID").hidden) {
+		if (!table.isColumnVisible("ContactID")) {
 			table.showColumn("ContactID");
 		}
 	}

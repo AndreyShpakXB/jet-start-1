@@ -1,6 +1,6 @@
 import {JetView} from "webix-jet";
 
-import {dateFormtM, serverFormat} from "../../helpers";
+import {DATE_FORMAT_M, SERVER_FORMAT} from "../../helpers";
 import contactsCollection from "../../models/contacts";
 import statusesCollection from "../../models/statuses";
 
@@ -16,7 +16,7 @@ export default class DetailsView extends JetView {
 			rows: [
 				{view: "text", label: "First name", name: "FirstName", maxWidth, labelWidth},
 				{view: "text", label: "Last name", name: "LastName", maxWidth, labelWidth},
-				{view: "datepicker", label: "Joining date", name: "StartDate", maxWidth, labelWidth, format: dateFormtM},
+				{view: "datepicker", label: "Joining date", name: "StartDate", maxWidth, labelWidth, format: DATE_FORMAT_M},
 				{view: "combo", label: "Status", name: "StatusID", maxWidth, labelWidth, options: {body: {data: statusesCollection, template: "#Value#"}}},
 				{view: "text", label: "Job", name: "Job", maxWidth, labelWidth},
 				{view: "text", label: "Company", name: "Company", maxWidth, labelWidth},
@@ -32,7 +32,7 @@ export default class DetailsView extends JetView {
 				{view: "text", label: "Email", name: "Email", maxWidth, labelWidth},
 				{view: "text", label: "Skype", name: "Skype", maxWidth, labelWidth},
 				{view: "text", label: "Phone", name: "Phone", maxWidth, labelWidth},
-				{view: "datepicker", label: "Birthday", name: "Birthday", maxWidth, labelWidth, format: dateFormtM},
+				{view: "datepicker", label: "Birthday", name: "Birthday", maxWidth, labelWidth, format: DATE_FORMAT_M},
 				{
 					borderless: true,
 					cols: [
@@ -73,7 +73,7 @@ export default class DetailsView extends JetView {
 
 						if (!form.validate()) return;
 
-						const formatter = webix.Date.dateToStr(serverFormat);
+						const formatter = webix.Date.dateToStr(SERVER_FORMAT);
 						object.StartDate = formatter(object.StartDate);
 						object.Birthday = formatter(object.Birthday);
 
@@ -81,9 +81,13 @@ export default class DetailsView extends JetView {
 							contactsCollection.updateItem(object.id, object);
 						}
 						else {
-							contactsCollection.add(object);
+							contactsCollection.waitSave(() => {
+								contactsCollection.add(object);
+							}).then((result) => {
+								object.id = result.id;
+								this.app.callEvent("onContactItemSelect", [object.id]);
+							});
 						}
-						this.app.callEvent("onContactItemSelect", [object.id]);
 					}
 				}
 			]

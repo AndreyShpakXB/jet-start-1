@@ -45,13 +45,20 @@ export default class ContactsListView extends JetView {
 
 	init() {
 		const list = this.$$("list");
+		const showContact = (id) => {
+			this.show(`./contacts.info?id=${id}`);
+			list.select(id);
+		};
+
 		contactsCollection.waitData.then(() => {
 			list.parse(contactsCollection);
 			list.select(contactsCollection.getFirstId());
 		});
 		this.on(this.app, "onContactItemSelect", (id) => {
-			this.show(`./contacts.info?id=${id}`);
-			list.select(id);
+			showContact(id);
+		});
+		this.on(this.app, "onAfterContactDeleted", (id) => {
+			showContact(id);
 		});
 	}
 }

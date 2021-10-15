@@ -27,6 +27,7 @@ export default class ContactInfoView extends JetView {
 								click: () => {
 									webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
 										contactsCollection.remove(this._contactId);
+										this.app.callEvent("onAfterContactDeleted", [contactsCollection.getFirstId()]);
 									});
 								}
 							},
@@ -70,7 +71,6 @@ export default class ContactInfoView extends JetView {
 				]
 			};
 
-
 			this._tableFiles = new FilesTableView(this.app);
 			const uploader = {
 				view: "uploader",
@@ -95,7 +95,7 @@ export default class ContactInfoView extends JetView {
 								borderless: true,
 								view: "tabbar",
 								id: "tabbar",
-								value: "listView",
+								value: "activitiesTab",
 								multiview: true,
 								options: [
 									{value: "Activities", id: "activitiesTab"},

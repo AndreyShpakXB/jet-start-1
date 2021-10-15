@@ -1,5 +1,5 @@
-export const dateFormat = "%d %F %Y";
-export const dateFormtM = "%d %M %Y";
-export const timeFormat = "%H:%i";
-export const serverFormat = "%Y-%m-%d %H:%i";
-// export const serverFormatM = "%Y-%m-%d";
+export const DATE_FORMAT_F = "%d %F %Y";
+export const DATE_FORMAT_M = "%d %M %Y";
+export const TIME_FORMAT = "%H:%i";
+export const SERVER_FORMAT = "%Y-%m-%d %H:%i";
+// export const SERVER_FORMATM = "%Y-%m-%d";

@@ -1,6 +1,6 @@
 import {JetView} from "webix-jet";
 
-import {dateFormat} from "../../helpers";
+import {DATE_FORMAT_F} from "../../helpers";
 import activitiesCollection from "../../models/activities";
 import activityTypes from "../../models/activityTypes";
 import contactsCollection from "../../models/contacts";
@@ -23,10 +23,10 @@ export default class ActivityPopup extends JetView {
 				elements: [
 					{view: "textarea", label: "Details", name: "Details"},
 					{view: "combo", options: activityTypes, label: "Type", name: "TypeID"},
-					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: "Contact", name: "ContactID"},
+					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: "Contact", name: "ContactID", localId: "contactID"},
 					{
 						cols: [
-							{view: "datepicker", label: "Date", name: "DueDate", format: dateFormat},
+							{view: "datepicker", label: "Date", name: "DueDate", format: DATE_FORMAT_F},
 							{
 								view: "datepicker",
 								localId: "time",
@@ -108,13 +108,19 @@ export default class ActivityPopup extends JetView {
 		this.getRoot().hide();
 	}
 
-	showPopup(object) {
+	disableContactCombo() {
+		const combo = this.$$("contactID");
+		combo.disable();
+		combo.refresh();
+	}
+
+	showPopup(object, isEdit) {
 		const popup = this.getRoot();
 		if (!popup) {
 			return;
 		}
-		const buttonName = object ? "Save" : "Add";
-		const popupHeader = object ? "Edit activity" : "Add activity";
+		const buttonName = isEdit ? "Save" : "Add";
+		const popupHeader = isEdit ? "Edit activity" : "Add activity";
 		if (object) {
 			if (object.DueDate) {
 				const h = object.DueDate.getHours();

@@ -58,37 +58,14 @@ export default class DetailsView extends JetView {
 					view: "button",
 					label: "Cancel",
 					width: 100,
-					click: () => {
-						this.app.callEvent("onContactItemSelect", [this._contactId]);
-					}
+					click: () => this.app.callEvent("onAfterDetailsInfoClosed", [this._contactId])
 				},
 				{
 					view: "button",
 					label: "Save",
 					width: 150,
 					localId: "button_add",
-					click: () => {
-						const form = this.$$("form");
-						const object = form.getValues();
-
-						if (!form.validate()) return;
-
-						const formatter = webix.Date.dateToStr(SERVER_FORMAT);
-						object.StartDate = formatter(object.StartDate);
-						object.Birthday = formatter(object.Birthday);
-
-						if (object.id) {
-							contactsCollection.updateItem(object.id, object);
-						}
-						else {
-							contactsCollection.waitSave(() => {
-								contactsCollection.add(object);
-							}).then((result) => {
-								object.id = result.id;
-								this.app.callEvent("onContactItemSelect", [object.id]);
-							});
-						}
-					}
+					click: this.onSave
 				}
 			]
 		};
@@ -127,6 +104,30 @@ export default class DetailsView extends JetView {
 					this.setValues(contact);
 				}
 			}
+		}
+	}
+
+	onSave() {
+		const form = this.$scope.$$("form");
+		const object = form.getValues();
+
+		if (!form.validate()) return;
+
+		const formatter = webix.Date.dateToStr(SERVER_FORMAT);
+		object.StartDate = formatter(object.StartDate);
+		object.Birthday = formatter(object.Birthday);
+
+		if (object.id) {
+			contactsCollection.updateItem(object.id, object);
+			this.$scope.app.callEvent("onAfterDetailsInfoClosed", [object.id]);
+		}
+		else {
+			contactsCollection.waitSave(() => {
+				contactsCollection.add(object);
+			}).then((result) => {
+				object.id = result.id;
+				this.$scope.app.callEvent("onAfterDetailsInfoClosed", [object.id]);
+			});
 		}
 	}
 

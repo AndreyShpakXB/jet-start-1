@@ -9,12 +9,7 @@ import ActivityPopup from "./activityPopup";
 export default class ActivitiesTableView extends JetView {
 	constructor(app, hide) {
 		super(app);
-		if (hide) {
-			this._hideData = true;
-		}
-		else {
-			this._hideData = false;
-		}
+		this._hideData = !!hide;
 	}
 
 	config() {
@@ -32,17 +27,7 @@ export default class ActivitiesTableView extends JetView {
 						id: "DueDate",
 						minWidth: 150,
 						width: 250,
-						header: [
-							"Due date",
-							{
-								content: "datepickerFilter",
-								inputConfig: {format: webix.Date.dateToStr(DATE_FORMAT_F)},
-								compare(cell, filter) {
-									const date1 = webix.Date.dayStart(cell).getTime();
-									const date2 = webix.Date.dayStart(filter).getTime();
-									return date1 === date2;
-								}
-							}],
+						header: ["Due date", {content: "datepickerFilter", inputConfig: {format: webix.Date.dateToStr(DATE_FORMAT_F)}, compare: this.dateCompare}],
 						sort: "date",
 						format: webix.Date.dateToStr(DATE_FORMAT_F)
 					},
@@ -69,20 +54,8 @@ export default class ActivitiesTableView extends JetView {
 					}
 				],
 				onClick: {
-					"wxi-pencil": (e, obj) => {
-						const object = activitiesCollection.getItem(obj);
-						if (this._hideData) {
-							this._activityPopup.disableContactCombo();
-						}
-						this._activityPopup.showPopup(object, true);
-						return false;
-					},
-					"wxi-trash": (e, obj) => {
-						webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
-							activitiesCollection.remove(obj);
-						});
-						return false;
-					}
+					"wxi-pencil": this.onEdit,
+					"wxi-trash": this.onDelete
 				},
 				select: "row"
 			};
@@ -107,6 +80,28 @@ export default class ActivitiesTableView extends JetView {
 				details.data.DueDate = webix.Date.dateToStr(SERVER_FORMAT)(details.data.DueDate);
 			});
 		}
+	}
+
+	onEdit(e, obj) {
+		const object = activitiesCollection.getItem(obj);
+		if (this.$scope._hideData) {
+			this.$scope._activityPopup.disableContactCombo();
+		}
+		this.$scope._activityPopup.showPopup(object, true);
+		return false;
+	}
+
+	onDelete(e, obj) {
+		webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
+			activitiesCollection.remove(obj);
+		});
+		return false;
+	}
+
+	dateCompare(cell, filter) {
+		const date1 = webix.Date.dayStart(cell);
+		const date2 = webix.Date.dayStart(filter);
+		return webix.Date.equal(date1, date2);
 	}
 
 	showData(id) {

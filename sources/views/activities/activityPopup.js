@@ -57,12 +57,7 @@ export default class ActivityPopup extends JetView {
 						{
 							view: "button",
 							label: "Cancel",
-							click: () => {
-								const form = this.$$("popup_form");
-								form.clear();
-								form.clearValidation();
-								this.getRoot().hide();
-							}
+							click: this.onCancel
 						}
 					]}
 				],
@@ -72,6 +67,13 @@ export default class ActivityPopup extends JetView {
 				}
 			}
 		};
+	}
+
+	onCancel() {
+		const form = this.$scope.$$("popup_form");
+		form.clear();
+		form.clearValidation();
+		this.$scope.getRoot().hide();
 	}
 
 	buttonAddClick() {

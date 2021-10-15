@@ -12,9 +12,7 @@ export default class ActivitiesView extends JetView {
 			template: this.createButtonIconTemplate("fas fa-plus-square"),
 			label: "Add activity",
 			width: 150,
-			click: () => {
-				this._activityPopup.showPopup();
-			}
+			click: () => this._activityPopup.showPopup()
 		};
 
 		return {

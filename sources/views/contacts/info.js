@@ -24,12 +24,7 @@ export default class ContactInfoView extends JetView {
 								width: 150,
 								type: "icon",
 								icon: "wxi wxi-trash",
-								click: () => {
-									webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
-										contactsCollection.remove(this._contactId);
-										this.app.callEvent("onAfterContactDeleted", [contactsCollection.getFirstId()]);
-									});
-								}
+								click: this.onDelete
 							},
 							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this._contactId}`)}
 						]
@@ -163,6 +158,13 @@ export default class ContactInfoView extends JetView {
 				}
 			}
 		}
+	}
+
+	onDelete() {
+		webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
+			contactsCollection.remove(this.$scope._contactId);
+			this.$scope.app.callEvent("onAfterContactDeleted", [contactsCollection.getFirstId()]);
+		});
 	}
 
 	showContact(id) {

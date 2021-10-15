@@ -122,7 +122,7 @@ export default class ActivityPopup extends JetView {
 		const buttonName = isEdit ? "Save" : "Add";
 		const popupHeader = isEdit ? "Edit activity" : "Add activity";
 		if (object) {
-			if (object.DueDate) {
+			if (object.DueDate && webix.isDate(object.DueDate)) {
 				const h = object.DueDate.getHours();
 				const m = object.DueDate.getMinutes();
 				object.time = `${h}:${m}`;

@@ -93,6 +93,7 @@ export default class DetailsView extends JetView {
 			]
 		};
 
+		const maxLength = 15;
 		const form = {
 			view: "form",
 			localId: "form",
@@ -103,9 +104,9 @@ export default class DetailsView extends JetView {
 			],
 			borderless: true,
 			rules: {
-				FirstName: this.webix.rules.isNotEmpty,
-				LastName: this.webix.rules.isNotEmpty,
-				Email: this.webix.rules.isNotEmpty
+				FirstName: val => !!val && val.length < maxLength,
+				LastName: val => !!val && val.length < maxLength,
+				Email: val => !!val && val.length < maxLength
 			}
 		};
 

@@ -140,7 +140,8 @@ export default class ContactInfoView extends JetView {
 				const fileObject = {
 					name: file.name,
 					lastModifiedDate: file.file.lastModifiedDate,
-					size: file.sizetext,
+					size: file.size,
+					sizetext: file.sizetext,
 					contactId: this._contactId
 				};
 				filesCollection.add(fileObject);
@@ -153,8 +154,13 @@ export default class ContactInfoView extends JetView {
 		if (url[0].page === "contacts.info") {
 			this._contactId = url[0].params.id;
 			if (this._contactId) {
-				this.showContact(this._contactId);
-				filesCollection.filter("TypeID", this._contactId);
+				if (contactsCollection.exists(this._contactId)) {
+					this.showContact(this._contactId);
+					filesCollection.filter("TypeID", this._contactId);
+				}
+				else {
+					this.webix.message({type: "error", text: `Wrong contact's id! (${this._contactId})`});
+				}
 			}
 		}
 	}
@@ -176,8 +182,11 @@ export default class ContactInfoView extends JetView {
 					const status = statusesCollection.getItem(contact[key]).Value;
 					obj.define("label", status);
 				}
-				else {
+				else if (contact[key]) {
 					obj.define("label", contact[key]);
+				}
+				else {
+					obj.define("label", "(no info)");
 				}
 				if (key === "Birthday" && contact[key].length > 10) {
 					obj.define("label", contact.Birthday.substring(0, contact.Birthday.length - 6));

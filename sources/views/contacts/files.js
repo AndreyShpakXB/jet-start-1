@@ -11,7 +11,7 @@ export default class FilesTableView extends JetView {
 			columns: [
 				{id: "name", header: "Name", minWidth: 150, sort: "text", fillspace: true},
 				{id: "lastModifiedDate", header: "Change date", minWidth: 150, width: 250, sort: "date", format: webix.Date.dateToStr(DATE_FORMAT_F)},
-				{id: "size", header: "Size", minWidth: 150, sort: "text"},
+				{id: "size", header: "Size", minWidth: 150, sort: "int", template: "#sizetext#"},
 				{id: "delete", header: "", template: "{common.trashIcon()}", width: 40}
 			],
 			onClick: {

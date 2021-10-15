@@ -8,14 +8,19 @@ export default class ContactsListView extends JetView {
 			localId: "list",
 			view: "list",
 			maxWidth: 300,
-			template:
-			`<div style="display:flex;direction:column;align-items:center;">
-				<div class='user-icon'></div>
-				<div>
-					<div>#FirstName# #LastName#</div>
-					<div>#Email#</div>
-				</div>
-			</div>`,
+			template: (obj) => {
+				let name = `${obj.FirstName} ${obj.LastName}`;
+				if (name.length > 20) {
+					name = `${name.substring(0, 20)}...`;
+				}
+				return `<div style="display:flex;direction:column;align-items:center;">
+					<div class='user-icon'></div>
+					<div>
+						<div>${name}</div>
+						<div>${obj.Email}</div>
+					</div>
+				</div>`;
+			},
 			type: {
 				height: 65
 			},

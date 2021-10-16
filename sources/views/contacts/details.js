@@ -38,6 +38,7 @@ export default class DetailsView extends JetView {
 					cols: [
 						{view: "template", localId: "image", template: "<img style='object-fit: fill; height: 200px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
 						{
+							borderless: true,
 							margin: 10,
 							paddingX: 10,
 							rows: [

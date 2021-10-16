@@ -30,7 +30,7 @@ export default class ContactInfoView extends JetView {
 			const w = 250;
 			const firstCol = {
 				rows: [
-					{view: "template", localId: "image", template: "<img style='object-fit: fill; height: 200px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
+					{view: "template", localId: "image", template: "<img style='object-fit: cover; height: 200px; width: 250px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
 					{view: "label", localId: "StatusID", label: "", css: "status", width: w}
 				]
 			};
@@ -139,7 +139,7 @@ export default class ContactInfoView extends JetView {
 			if (this._contactId) {
 				if (contactsCollection.exists(this._contactId)) {
 					this.showContact(this._contactId);
-					filesCollection.filter("TypeID", this._contactId);
+					filesCollection.filter(obj => +obj.contactId === +this._contactId);
 				}
 				else {
 					this.webix.message({type: "error", text: `Wrong contact's id! (${this._contactId})`});

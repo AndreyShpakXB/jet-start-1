@@ -39,7 +39,9 @@ export default class ContactsListView extends JetView {
 			name = `${name.substring(0, 20)}...`;
 		}
 		return `<div style="display:flex;direction:column;align-items:center;">
-			<div class='user-icon'></div>
+			<div class='user-icon'>
+				<img style='object-fit: fill; height: 42px; width: 42px; margin: -1px;' src='${obj.Photo}'></img>
+			</div>
 			<div>
 				<div>${name}</div>
 				<div>${obj.Email}</div>

@@ -43,7 +43,7 @@ export default class DetailsView extends JetView {
 							paddingX: 10,
 							rows: [
 								{},
-								{view: "uploader", localId: "uploader", label: "Change photo", autosend: false, width: 150},
+								{view: "uploader", localId: "uploader", label: "Change photo", autosend: false, width: 150, accept: "image/jpeg, image/png"},
 								{view: "button", label: "Delete photo", width: 150, click: this.onPhotoDelete}
 							]
 						}
@@ -84,7 +84,7 @@ export default class DetailsView extends JetView {
 			rules: {
 				FirstName: val => !!val && val.length < maxLength,
 				LastName: val => !!val && val.length < maxLength,
-				Email: val => !!val && val.length < maxLength
+				Email: val => !!val && val.length < maxLength + 10
 			}
 		};
 

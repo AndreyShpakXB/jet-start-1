@@ -36,19 +36,13 @@ export default class DetailsView extends JetView {
 				{
 					borderless: true,
 					cols: [
-						{view: "template", localId: "image", css: "contact-image", template: "<img src='#src#'></img>", height: 200},
+						{view: "template", localId: "image", template: "<img style='object-fit: fill; height: 200px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
 						{
 							margin: 10,
 							paddingX: 10,
 							rows: [
 								{},
-								{
-									view: "uploader",
-									localId: "uploader",
-									label: "Change photo",
-									autosend: false,
-									width: 150
-								},
+								{view: "uploader", localId: "uploader", label: "Change photo", autosend: false, width: 150},
 								{view: "button", label: "Delete photo", width: 150, click: this.onPhotoDelete}
 							]
 						}
@@ -98,6 +92,8 @@ export default class DetailsView extends JetView {
 
 	init() {
 		const uploader = this.$$("uploader");
+		const self = this;
+
 		uploader.attachEvent("onAfterFileAdd", () => {
 			const fileId = uploader.files.getFirstId();
 			const file = uploader.files.getItem(fileId).file;
@@ -106,12 +102,8 @@ export default class DetailsView extends JetView {
 			reader.readAsDataURL(file);
 			reader.onload = () => {
 				const dataUrl = reader.result;
-				const toUpdate = contactsCollection.getItem(this._contactId);
-				toUpdate.Photo = dataUrl;
-
-				contactsCollection.updateItem(this._contactId, toUpdate);
-
-				this.$$("image").define("src", file);
+				self._photoBuffer = dataUrl;
+				self.$$("image").setValues({src: dataUrl});
 			};
 			reader.onerror = (error) => {
 				this.webix.message({type: "error", text: error});
@@ -140,12 +132,8 @@ export default class DetailsView extends JetView {
 	onPhotoDelete() {
 		const item = contactsCollection.getItem(this.$scope._contactId);
 		if (item) {
-			item.Photo = "";
-			contactsCollection.waitSave(() => {
-				contactsCollection.updateItem(this.$scope._contactId, item);
-			}).then(() => {
-				this.$scope.webix.message("Photo deleted!");
-			});
+			this.$scope._photoBuffer = "";
+			this.$scope.$$("image").setValues({src: ""});
 		}
 		else {
 			this.$scope.webix.message({type: "error", text: "load error"});
@@ -155,8 +143,9 @@ export default class DetailsView extends JetView {
 	onSave() {
 		const form = this.$scope.$$("form");
 		const object = form.getValues();
-
 		if (!form.validate()) return;
+
+		object.Photo = this.$scope._photoBuffer;
 
 		const formatter = webix.Date.dateToStr(SERVER_FORMAT);
 		object.StartDate = formatter(object.StartDate);
@@ -178,6 +167,8 @@ export default class DetailsView extends JetView {
 
 	setValues(item) {
 		this.$$("form").setValues(item);
+		this.$$("image").setValues({src: item.Photo});
+		this._photoBuffer = item.Photo;
 	}
 
 	showAsAddingForm() {

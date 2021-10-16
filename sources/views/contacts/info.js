@@ -19,14 +19,7 @@ export default class ContactInfoView extends JetView {
 					{
 						css: "background-color: white;",
 						cols: [
-							{
-								view: "button",
-								label: "Delete",
-								width: 150,
-								type: "icon",
-								icon: "wxi wxi-trash",
-								click: this.onDelete
-							},
+							{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash", click: this.onDelete},
 							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this._contactId}`)}
 						]
 					}
@@ -37,7 +30,7 @@ export default class ContactInfoView extends JetView {
 			const w = 250;
 			const firstCol = {
 				rows: [
-					{view: "template", localId: "image", css: "contact-image", template: "Image"},
+					{view: "template", localId: "image", template: "<img style='object-fit: fill; height: 200px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
 					{view: "label", localId: "StatusID", label: "", css: "status", width: w}
 				]
 			};
@@ -66,12 +59,7 @@ export default class ContactInfoView extends JetView {
 				]
 			};
 
-			const uploader = {
-				view: "uploader",
-				localId: "uploader",
-				label: "Upload",
-				autosend: false
-			};
+			const uploader = {view: "uploader", localId: "uploader", label: "Upload", autosend: false};
 			const filesTab = {
 				id: "filesTab",
 				rows: [
@@ -183,7 +171,7 @@ export default class ContactInfoView extends JetView {
 		const name = this.$$("name");
 		name.define("label", `${contact.FirstName} ${contact.LastName}`);
 		name.refresh();
-
+		this.$$("image").setValues({src: contact.Photo});
 		const keys = Object.keys(contact).filter(key => key !== "id" && !key.includes("$") && key !== "name");
 		keys.forEach((key) => {
 			const obj = this.$$(key);

@@ -15,17 +15,10 @@ export default class FilesTableView extends JetView {
 				{id: "delete", header: "", template: "{common.trashIcon()}", width: 40}
 			],
 			onClick: {
-				"wxi-pencil": this.onEdit,
 				"wxi-trash": this.onDelete
 			},
 			select: "row"
 		};
-	}
-
-	onEdit(e, obj) {
-		const object = filesCollection.getItem(obj);
-		this.$scope._activityPopup.showPopup(object);
-		return false;
 	}
 
 	onDelete(e, obj) {

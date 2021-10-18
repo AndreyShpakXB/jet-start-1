@@ -1,8 +1,12 @@
 import {JetView} from "webix-jet";
 
+import activitiesCollection from "../../models/activities";
 import contactsCollection from "../../models/contacts";
+import filesCollection from "../../models/files";
 import statusesCollection from "../../models/statuses";
-
+import ActivityPopup from "../activities/activityPopup";
+import ActivitiesTableView from "../activities/table";
+import FilesTableView from "./files";
 
 export default class ContactInfoView extends JetView {
 	config() {
@@ -11,12 +15,12 @@ export default class ContactInfoView extends JetView {
 				padding: 10,
 				localId: "header",
 				cols: [
-					{view: "label", localId: "name", label: "Name Surname", css: "label-info-name"},
+					{view: "label", localId: "name", label: "", css: "label-info-name"},
 					{
 						css: "background-color: white;",
 						cols: [
-							{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash"},
-							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil"}
+							{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash", click: this.onDelete},
+							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this._contactId}`)}
 						]
 					}
 				]
@@ -26,29 +30,64 @@ export default class ContactInfoView extends JetView {
 			const w = 250;
 			const firstCol = {
 				rows: [
-					{view: "template", localId: "image", css: "contact-image", template: "Image"},
-					{view: "label", localId: "StatusID", label: "Status", css: "status", width: w}
+					{view: "template", localId: "image", template: "<img style='object-fit: cover; height: 200px; width: 250px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
+					{view: "label", localId: "StatusID", label: "", css: "status", width: w}
 				]
 			};
 			const secondCol = {
 				rows: [
-					{view: "label", localId: "Email", label: "Email", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-envelope")},
-					{view: "label", localId: "Skype", label: "Skype", height: h, width: w, css: "label-info", template: this.createIconTemplate("fab fa-skype")},
-					{view: "label", localId: "Job", label: "Job", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-tag")},
-					{view: "label", localId: "Company", label: "Company", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-building")}
+					{view: "label", localId: "Email", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-envelope")},
+					{view: "label", localId: "Skype", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fab fa-skype")},
+					{view: "label", localId: "Job", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-tag")},
+					{view: "label", localId: "Company", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-building")}
 				]
 			};
 			const thirdCol = {
 				rows: [
-					{view: "label", localId: "Birthday", label: "Date of birth", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-calendar-alt")},
-					{view: "label", localId: "Address", label: "Location", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-map-marker-alt")}
+					{view: "label", localId: "Birthday", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-calendar-alt")},
+					{view: "label", localId: "Address", label: "", height: h, width: w, css: "label-info", template: this.createIconTemplate("fas fa-map-marker-alt")}
 				]
 			};
 
-			const space = {
-				view: "template",
-				width: 50,
-				borderless: true
+			const space = {view: "template", width: 50, borderless: true};
+
+			const activitiesTab = {
+				id: "activitiesTab",
+				rows: [
+					new ActivitiesTableView(this.app, true),
+					{view: "button", label: "Add activity", click: () => this._activityPopup.showPopup({ContactID: this._contactId})}
+				]
+			};
+
+			const uploader = {view: "uploader", localId: "uploader", label: "Upload", autosend: false};
+			const filesTab = {
+				id: "filesTab",
+				rows: [
+					FilesTableView,
+					uploader
+				]
+			};
+
+			const tabs = {
+				rows: [
+					{
+						type: "clean",
+						rows: [
+							{
+								borderless: true,
+								view: "tabbar",
+								id: "tabbar",
+								value: "activitiesTab",
+								multiview: true,
+								options: [
+									{value: "Activities", id: "activitiesTab"},
+									{value: "Files", id: "filesTab"}
+								]
+							}
+						]
+					},
+					{animate: false, cells: [activitiesTab, filesTab]}
+				]
 			};
 
 			const content = {
@@ -68,37 +107,87 @@ export default class ContactInfoView extends JetView {
 				rows: [
 					header,
 					content,
-					{}
+					{height: 50},
+					tabs
 				]
 			};
 		});
 	}
 
+	init() {
+		this._activityPopup = this.ui(ActivityPopup);
+		this._activityPopup.disableContactCombo();
+		const uploader = this.$$("uploader");
+		uploader.attachEvent("onAfterFileAdd", () => {
+			uploader.files.data.each((file) => {
+				const fileObject = {
+					name: file.name,
+					lastModifiedDate: file.file.lastModifiedDate,
+					size: file.size,
+					sizetext: file.sizetext,
+					contactId: this._contactId
+				};
+				filesCollection.add(fileObject);
+			});
+			uploader.files.data.clearAll();
+		});
+	}
+
 	urlChange(view, url) {
-		if (url[0].page === "contacts") {
-			const id = url[0].params.id;
-			const contact = contactsCollection.getItem(id);
-			if (contact) {
-				this.showContact(contact);
+		if (url[0].page === "contacts.info") {
+			this._contactId = this.getParam("id");
+			if (this._contactId) {
+				if (contactsCollection.exists(this._contactId)) {
+					this.showContact(this._contactId);
+					filesCollection.filter(obj => +obj.contactId === +this._contactId);
+				}
+				else {
+					this.webix.message({type: "error", text: `Wrong contact's id! (${this._contactId})`});
+				}
 			}
 		}
 	}
 
-	showContact(contact) {
+	onDelete() {
+		webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
+			const id = +this.$scope._contactId;
+			const toRemove = [];
+			activitiesCollection.data.each((obj) => {
+				if (obj.ContactID === id) {
+					toRemove.push(obj.id);
+				}
+			});
+			activitiesCollection.remove(toRemove);
+			contactsCollection.remove(id);
+			this.$scope.app.callEvent("onAfterContactDeleted", [contactsCollection.getFirstId()]);
+		});
+	}
+
+	showContact(id) {
+		const contact = contactsCollection.getItem(id);
+
+		if (!contact) return;
+
 		const name = this.$$("name");
 		name.define("label", `${contact.FirstName} ${contact.LastName}`);
 		name.refresh();
-
+		this.$$("image").setValues({src: contact.Photo});
 		const keys = Object.keys(contact).filter(key => key !== "id" && !key.includes("$") && key !== "name");
 		keys.forEach((key) => {
 			const obj = this.$$(key);
 			if (obj) {
-				if (key === "StatusID") {
+				if (key === "StatusID" && +contact[key] !== 0 && contact[key]) {
 					const status = statusesCollection.getItem(contact[key]).Value;
 					obj.define("label", status);
 				}
-				else {
+				else if (contact[key]) {
 					obj.define("label", contact[key]);
+				}
+				else {
+					obj.define("label", "(no info)");
+				}
+				if (key === "Birthday" && contact[key].length > 10) {
+					obj.define("label", contact.Birthday.substring(0, contact.Birthday.length - 6));
 				}
 				obj.refresh();
 			}

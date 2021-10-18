@@ -8,7 +8,8 @@ const contactsCollection = new webix.DataCollection({
 			}
 		}
 	},
-	url: URLs.contactsUrl
+	url: URLs.contactsUrl,
+	save: `rest->${URLs.contactsUrl}`
 });
 
 export default contactsCollection;

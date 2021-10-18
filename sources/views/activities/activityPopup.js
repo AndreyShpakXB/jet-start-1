@@ -1,6 +1,6 @@
 import {JetView} from "webix-jet";
 
-import {dateFormat} from "../../helpers";
+import {DATE_FORMAT_F} from "../../helpers";
 import activitiesCollection from "../../models/activities";
 import activityTypes from "../../models/activityTypes";
 import contactsCollection from "../../models/contacts";
@@ -8,7 +8,7 @@ import contactsCollection from "../../models/contacts";
 export default class ActivityPopup extends JetView {
 	config() {
 		return {
-			id: "activity_popup",
+			localId: "activity_popup",
 			modal: true,
 			view: "window",
 			width: 600,
@@ -16,17 +16,17 @@ export default class ActivityPopup extends JetView {
 			head: {template: "Add", localId: "header"},
 			body: {
 				view: "form",
-				id: "popup_form",
+				localId: "popup_form",
 				align: "center",
 				padding: 10,
 				margin: 10,
 				elements: [
 					{view: "textarea", label: "Details", name: "Details"},
 					{view: "combo", options: activityTypes, label: "Type", name: "TypeID"},
-					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: "Contact", name: "ContactID"},
+					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: "Contact", name: "ContactID", localId: "contactID"},
 					{
 						cols: [
-							{view: "datepicker", label: "Date", name: "DueDate", format: dateFormat},
+							{view: "datepicker", label: "Date", name: "DueDate", format: DATE_FORMAT_F},
 							{
 								view: "datepicker",
 								localId: "time",
@@ -57,12 +57,7 @@ export default class ActivityPopup extends JetView {
 						{
 							view: "button",
 							label: "Cancel",
-							click: () => {
-								const form = this.$$("popup_form");
-								form.clear();
-								form.clearValidation();
-								this.getRoot().hide();
-							}
+							click: this.onCancel
 						}
 					]}
 				],
@@ -72,6 +67,13 @@ export default class ActivityPopup extends JetView {
 				}
 			}
 		};
+	}
+
+	onCancel() {
+		const form = this.$scope.$$("popup_form");
+		form.clear();
+		form.clearValidation();
+		this.$scope.getRoot().hide();
 	}
 
 	buttonAddClick() {
@@ -108,18 +110,24 @@ export default class ActivityPopup extends JetView {
 		this.getRoot().hide();
 	}
 
-	showPopup(index) {
-		const object = activitiesCollection.getItem(index);
+	disableContactCombo() {
+		const combo = this.$$("contactID");
+		combo.disable();
+	}
+
+	showPopup(object, isEdit) {
 		const popup = this.getRoot();
 		if (!popup) {
 			return;
 		}
-		const buttonName = object ? "Save" : "Add";
-		const popupHeader = object ? "Edit activity" : "Add activity";
+		const buttonName = isEdit ? "Save" : "Add";
+		const popupHeader = isEdit ? "Edit activity" : "Add activity";
 		if (object) {
-			const h = object.DueDate.getHours();
-			const m = object.DueDate.getMinutes();
-			object.time = `${h}:${m}`;
+			if (object.DueDate && webix.isDate(object.DueDate)) {
+				const h = object.DueDate.getHours();
+				const m = object.DueDate.getMinutes();
+				object.time = `${h}:${m}`;
+			}
 			this.$$("popup_form").setValues(object);
 		}
 

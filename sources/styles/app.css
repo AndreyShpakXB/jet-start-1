@@ -67,6 +67,7 @@
 	font-size: 20px;
 }
 .user-icon {
+	overflow: hidden;
 	width: 40px;
 	height: 40px;
 	border-radius: 100%;
@@ -103,4 +104,11 @@
 
 .list-icon {
 	margin: 10 0 0 10;
+}
+
+.list-name {
+    width:170px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+	overflow: hidden;
 }

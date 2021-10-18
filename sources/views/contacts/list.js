@@ -24,8 +24,15 @@ export default class ContactsListView extends JetView {
 			click: this.onAdd
 		};
 
+		const search = {
+			localId: "search",
+			view: "text",
+			placeholder: "type to find matching contacts"
+		};
+
 		const ui = {
 			rows: [
+				search,
 				list,
 				button
 			]
@@ -69,6 +76,20 @@ export default class ContactsListView extends JetView {
 		});
 		this.on(this.app, "onAfterContactDeleted", (id) => {
 			showContact(id);
+		});
+		this.$$("search").attachEvent("onTimedKeyPress", () => {
+			const value = this.$$("search").getValue().toLowerCase();
+			if (!value) {
+				contactsCollection.filter(() => true);
+				return;
+			}
+			const item = contactsCollection.getItem(contactsCollection.getFirstId());
+			if (!item) {
+				contactsCollection.filter(() => true);
+				return;
+			}
+			const keys = Object.keys(item).filter(val => val !== "Photo");
+			list.filter(obj => keys.some(key => obj[key].toString().toLowerCase().indexOf(value) !== -1));
 		});
 	}
 }

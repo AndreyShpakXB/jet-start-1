@@ -34,16 +34,15 @@ export default class ContactsListView extends JetView {
 	}
 
 	createTemplate(obj) {
+		if (!obj.FirstName) obj.FirstName = "Name";
+		if (!obj.LastName) obj.LastName = "Surname";
 		let name = `${obj.FirstName} ${obj.LastName}`;
-		if (name.length > 20) {
-			name = `${name.substring(0, 20)}...`;
-		}
 		return `<div style="display:flex;direction:column;align-items:center;">
 			<div class='user-icon'>
 				<img style='object-fit: fill; height: 42px; width: 42px; margin: -1px;' src='${obj.Photo}'></img>
 			</div>
 			<div>
-				<div>${name}</div>
+				<div class='list-name'>${name}</div>
 				<div>${obj.Email}</div>
 			</div>
 		</div>`;

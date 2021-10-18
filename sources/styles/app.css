@@ -105,3 +105,10 @@
 .list-icon {
 	margin: 10 0 0 10;
 }
+
+.list-name {
+    width:170px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+	overflow: hidden;
+}

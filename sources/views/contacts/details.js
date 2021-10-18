@@ -71,7 +71,7 @@ export default class DetailsView extends JetView {
 			]
 		};
 
-		const maxLength = 15;
+		const maxLength = 30;
 		const form = {
 			view: "form",
 			localId: "form",
@@ -84,7 +84,7 @@ export default class DetailsView extends JetView {
 			rules: {
 				FirstName: val => !!val && val.length < maxLength,
 				LastName: val => !!val && val.length < maxLength,
-				Email: val => !!val && val.length < maxLength + 10
+				Email: this.webix.rules.isEmail
 			}
 		};
 
@@ -173,12 +173,15 @@ export default class DetailsView extends JetView {
 	}
 
 	showAsAddingForm() {
+		const value = "Add contact";
+		const property = "label";
+
 		const name = this.$$("name");
-		name.define("label", "Add contact");
+		name.define(property, value);
 		name.refresh();
 
 		const button = this.$$("button_add");
-		button.define("label", "Add contact");
+		button.define(property, value);
 		button.refresh();
 	}
 }

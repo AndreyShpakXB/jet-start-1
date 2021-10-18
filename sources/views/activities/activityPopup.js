@@ -113,7 +113,6 @@ export default class ActivityPopup extends JetView {
 	disableContactCombo() {
 		const combo = this.$$("contactID");
 		combo.disable();
-		combo.refresh();
 	}
 
 	showPopup(object, isEdit) {

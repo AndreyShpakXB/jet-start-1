@@ -48,17 +48,8 @@ export default class ActivityPopup extends JetView {
 					{view: "checkbox", label: "Comlpeted", name: "State", checkValue: "Close", uncheckValue: "Open"},
 					{cols: [
 						{},
-						{
-							view: "button",
-							label: "Add",
-							localId: "button_add",
-							click: () => this.buttonAddClick()
-						},
-						{
-							view: "button",
-							label: "Cancel",
-							click: this.onCancel
-						}
+						{view: "button", label: "Add", localId: "button_add", click: () => this.buttonAddClick()},
+						{view: "button", label: "Cancel", click: this.onCancel}
 					]}
 				],
 				rules: {

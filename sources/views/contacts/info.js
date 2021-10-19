@@ -165,11 +165,12 @@ export default class ContactInfoView extends JetView {
 
 	showContact(id) {
 		const contact = contactsCollection.getItem(id);
-
 		if (!contact) return;
 
+		const label = "label";
+
 		const name = this.$$("name");
-		name.define("label", `${contact.FirstName} ${contact.LastName}`);
+		name.define(label, `${contact.FirstName} ${contact.LastName}`);
 		name.refresh();
 		this.$$("image").setValues({src: contact.Photo});
 		const keys = Object.keys(contact).filter(key => key !== "id" && !key.includes("$") && key !== "name");
@@ -177,17 +178,23 @@ export default class ContactInfoView extends JetView {
 			const obj = this.$$(key);
 			if (obj) {
 				if (key === "StatusID" && +contact[key] !== 0 && contact[key]) {
-					const status = statusesCollection.getItem(contact[key]).Value;
-					obj.define("label", status);
+					const statusObj = statusesCollection.getItem(contact[key]);
+					if (statusObj) {
+						const status = statusObj.Value;
+						obj.define(label, status);
+					}
+					else {
+						obj.define(label, "(no info)");
+					}
 				}
 				else if (contact[key]) {
-					obj.define("label", contact[key]);
+					obj.define(label, contact[key]);
 				}
 				else {
-					obj.define("label", "(no info)");
+					obj.define(label, "(no info)");
 				}
 				if (key === "Birthday" && contact[key].length > 10) {
-					obj.define("label", contact.Birthday.substring(0, contact.Birthday.length - 6));
+					obj.define(label, contact.Birthday.substring(0, contact.Birthday.length - 6));
 				}
 				obj.refresh();
 			}

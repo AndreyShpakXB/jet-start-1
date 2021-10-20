@@ -60,5 +60,7 @@ export default {
 	"Wrong contact's id!": "Неправильный код контакта!",
 	"Change date": "Дата изменения",
 	Size: "Размер",
-	"type to find matching contacts": "введите текст для поиска контактов"
+	"type to find matching contacts": "введите текст для поиска контактов",
+	"must not be empty": "не должен быть пустым",
+	Column: "Столбец"
 };

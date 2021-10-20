@@ -23,7 +23,7 @@ export default {
 	"Are you sure you want to delete this item permanently?": "Are you sure you want to delete this item permanently?",
 	Confirmation: "Confirmation",
 	OK: "OK",
-	"Edit activity": "Редактирование активности",
+	"Edit activity": "Edit activity",
 	Details: "Details",
 	Type: "Type",
 	Date: "Date",
@@ -60,5 +60,7 @@ export default {
 	"Wrong contact's id!": "Wrong contact's id!",
 	"Change date": "Change date",
 	Size: "Size",
-	"type to find matching contacts": "type to find matching contacts"
+	"type to find matching contacts": "type to find matching contacts",
+	"must not be empty": "must not be empty",
+	Column: "Column"
 };

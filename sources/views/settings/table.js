@@ -1,20 +1,19 @@
-import {JetView} from "webix-jet";
+import BaseView from "../../BaseView";
 
-export default class EditTableView extends JetView {
+export default class EditTableView extends BaseView {
 	constructor(app, data) {
 		super(app);
 		this._dataCollection = data;
 	}
 
 	config() {
-		const _ = this.app.getService("locale")._;
 		return {
 			localId: "table",
 			view: "datatable",
 			editable: true,
 			columns: [
-				{id: "Value", header: _("Value"), maxWidth: 300, editor: "text"},
-				{id: "Icon", header: _("Icon"), fillspace: true, editor: "text"},
+				{id: "Value", header: this._("Value"), maxWidth: 300, editor: "text"},
+				{id: "Icon", header: this._("Icon"), fillspace: true, editor: "text"},
 				{id: "delete", header: "", template: "{common.trashIcon()}", width: 40}
 			],
 			onClick: {
@@ -29,7 +28,7 @@ export default class EditTableView extends JetView {
 				onBeforeEditStop(state, editor, ignore) {
 					const check = (editor.getValue() !== "");
 					if (!ignore && !check) {
-						webix.message({type: "error", text: `${editor.column} must not be empty`});
+						webix.message({type: "error", text: `${this._("Column")} '${this._(editor.column)}' ${this._("must not be empty")}`});
 						return false;
 					}
 					return true;
@@ -47,16 +46,19 @@ export default class EditTableView extends JetView {
 	}
 
 	onDelete(e, obj) {
-		const _ = this.$scope.app.getService("locale")._;
 		const info = {
-			title: _("Confirmation"),
-			text: _("Are you sure you want to delete this item permanently?"),
-			ok: _("OK"),
-			cancel: _("Cancel")
+			title: this.$scope._("Confirmation"),
+			text: this.$scope._("Are you sure you want to delete this item permanently?"),
+			ok: this.$scope._("OK"),
+			cancel: this.$scope._("Cancel")
 		};
 		webix.confirm(info).then(() => {
 			this.$scope._dataCollection.remove(obj);
 		});
 		return false;
+	}
+
+	editCancel() {
+		this.$$("table").editCancel();
 	}
 }

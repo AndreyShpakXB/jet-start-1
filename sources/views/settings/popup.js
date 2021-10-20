@@ -1,15 +1,14 @@
-import {JetView} from "webix-jet";
+import BaseView from "../../BaseView";
 
-export default class ItemPopup extends JetView {
+export default class ItemPopup extends BaseView {
 	config() {
-		const _ = this.app.getService("locale")._;
 		return {
 			localId: "popup",
 			modal: true,
 			view: "window",
 			width: 600,
 			position: "center",
-			head: {template: _("Add"), localId: "header"},
+			head: {template: this._("Add"), localId: "header"},
 			body: {
 				view: "form",
 				localId: "popup_form",
@@ -17,11 +16,11 @@ export default class ItemPopup extends JetView {
 				padding: 10,
 				margin: 10,
 				elements: [
-					{view: "text", label: _("Value"), name: "Value"},
-					{view: "text", label: _("Icon"), name: "Icon"},
+					{view: "text", label: this._("Value"), name: "Value"},
+					{view: "text", label: this._("Icon"), name: "Icon"},
 					{cols: [
-						{view: "button", label: _("Add"), localId: "button_add", click: this.buttonAddClick},
-						{view: "button", label: _("Cancel"), click: this.onCancel}
+						{view: "button", label: this._("Add"), localId: "button_add", click: this.buttonAddClick},
+						{view: "button", label: this._("Cancel"), click: this.onCancel}
 					]}
 				],
 				rules: {

@@ -1,19 +1,24 @@
-import {JetView} from "webix-jet";
-
-import {DATE_FORMAT_F, SERVER_FORMAT} from "../../helpers";
+import BaseView from "../../BaseView";
+import {DATE_FORMAT_F, SERVER_FORMAT, STATUSES} from "../../helpers";
 import activitiesCollection from "../../models/activities";
 import activityTypes from "../../models/activityTypes";
 import contactsCollection from "../../models/contacts";
 import ActivityPopup from "./activityPopup";
 
-export default class ActivitiesTableView extends JetView {
+export default class ActivitiesTableView extends BaseView {
 	constructor(app, hide) {
 		super(app);
 		this._hideData = !!hide;
 	}
 
 	config() {
-		const _ = this.app.getService("locale")._;
+		const lang = this.app.getService("locale").getLang();
+		if (lang === "en") {
+			webix.i18n.setLocale("en-US");
+		}
+		else {
+			webix.i18n.setLocale("ru-RU");
+		}
 		return this.webix.promise.all([
 			contactsCollection.waitData,
 			activityTypes.waitData
@@ -22,20 +27,20 @@ export default class ActivitiesTableView extends JetView {
 				localId: "table",
 				view: "datatable",
 				columns: [
-					{id: "State", checkValue: "Close", uncheckValue: "Open", header: "", template: "{common.checkbox()}", width: 40},
-					{id: "TypeID", header: [_("Activity type"), {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
+					{id: "State", checkValue: STATUSES.CLOSE, uncheckValue: STATUSES.OPEN, header: "", template: "{common.checkbox()}", width: 40},
+					{id: "TypeID", header: [this._("Activity type"), {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
 					{
 						id: "DueDate",
 						minWidth: 150,
 						width: 250,
-						header: [_("Due date"), {content: "datepickerFilter", inputConfig: {format: webix.Date.dateToStr(DATE_FORMAT_F)}, compare: this.dateCompare}],
+						header: [this._("Due date"), {content: "datepickerFilter", inputConfig: {format: webix.Date.dateToStr(DATE_FORMAT_F)}, compare: this.dateCompare}],
 						sort: "date",
 						format: webix.Date.dateToStr(DATE_FORMAT_F)
 					},
-					{id: "Details", header: [_("Details"), {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
+					{id: "Details", header: [this._("Details"), {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
 					{
 						id: "ContactID",
-						header: [_("Contact"), {content: "selectFilter"}],
+						header: [this._("Contact"), {content: "selectFilter"}],
 						minWidth: 150,
 						collection: contactsCollection,
 						fillspace: true,
@@ -100,12 +105,11 @@ export default class ActivitiesTableView extends JetView {
 	}
 
 	onDelete(e, obj) {
-		const _ = this.$scope.app.getService("locale")._;
 		const info = {
-			title: _("Confirmation"),
-			text: _("Are you sure you want to delete this item permanently?"),
-			ok: _("OK"),
-			cancel: _("Cancel")
+			title: this.$scope._("Confirmation"),
+			text: this.$scope._("Are you sure you want to delete this item permanently?"),
+			ok: this.$scope._("OK"),
+			cancel: this.$scope._("Cancel")
 		};
 		webix.confirm(info).then(() => {
 			activitiesCollection.remove(obj);

@@ -1,10 +1,9 @@
-import {JetView} from "webix-jet";
-
+import BaseView from "../../BaseView";
 import contactsCollection from "../../models/contacts";
+import statusesCollection from "../../models/statuses";
 
-export default class ContactsListView extends JetView {
+export default class ContactsListView extends BaseView {
 	config() {
-		const _ = this.app.getService("locale")._;
 		const list = {
 			localId: "list",
 			view: "list",
@@ -24,14 +23,14 @@ export default class ContactsListView extends JetView {
 
 		const button = {
 			view: "button",
-			label: _("Add contact"),
+			label: this._("Add contact"),
 			click: this.onAdd
 		};
 
 		const search = {
 			localId: "search",
 			view: "text",
-			placeholder: _("type to find matching contacts")
+			placeholder: this._("type to find matching contacts")
 		};
 
 		const ui = {
@@ -62,19 +61,44 @@ export default class ContactsListView extends JetView {
 		this.on(this.app, "onAfterContactDeleted", (id) => {
 			showContact(id);
 		});
-		this.$$("search").attachEvent("onTimedKeyPress", () => {
-			const value = this.$$("search").getValue().toLowerCase();
-			if (!value) {
+		this.on(this.$$("search"), "onTimedKeyPress", () => {
+			const value = this.$$("search").getValue().toLowerCase().trim();
+			const count = contactsCollection.count();
+			if (!value || !count) {
 				contactsCollection.filter(() => true);
 				return;
 			}
-			const item = contactsCollection.getItem(contactsCollection.getFirstId());
-			if (!item) {
-				contactsCollection.filter(() => true);
-				return;
-			}
-			const keys = Object.keys(item).filter(val => val !== "Photo");
-			list.filter(obj => keys.some(key => obj[key].toString().toLowerCase().indexOf(value) !== -1));
+			const keys = ["FirstName", "LastName", "Job", "Company", "Website", "Address", "Email", "Skype"];
+			list.filter((obj) => {
+				const res = keys.some((key) => {
+					const val = obj[key].toString().toLowerCase();
+					return val.indexOf(value) !== -1;
+				});
+				if (res) return true;
+				if (obj.Phone === value) return true;
+
+				const statusId = obj.StatusID;
+				if (statusId) {
+					const status = statusesCollection.getItem(obj.StatusID);
+					if (status && status.Value.toLowerCase().indexOf(value) !== -1) {
+						return true;
+					}
+				}
+
+				if (obj.Birthday) {
+					const birthdayYear = obj.Birthday.substring(0, 4);
+					if (birthdayYear === value) {
+						return true;
+					}
+				}
+				if (obj.StartDate) {
+					const startdate = obj.StartDate.substring(0, 4);
+					if (startdate === value) {
+						return true;
+					}
+				}
+				return false;
+			});
 		});
 	}
 

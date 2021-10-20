@@ -2,13 +2,14 @@ import {JetView} from "webix-jet";
 
 export default class ItemPopup extends JetView {
 	config() {
+		const _ = this.app.getService("locale")._;
 		return {
 			localId: "popup",
 			modal: true,
 			view: "window",
 			width: 600,
 			position: "center",
-			head: {template: "Add", localId: "header"},
+			head: {template: _("Add"), localId: "header"},
 			body: {
 				view: "form",
 				localId: "popup_form",
@@ -16,11 +17,11 @@ export default class ItemPopup extends JetView {
 				padding: 10,
 				margin: 10,
 				elements: [
-					{view: "text", label: "Value", name: "Value"},
-					{view: "text", label: "Icon", name: "Icon"},
+					{view: "text", label: _("Value"), name: "Value"},
+					{view: "text", label: _("Icon"), name: "Icon"},
 					{cols: [
-						{view: "button", label: "Add", localId: "button_add", click: this.buttonAddClick},
-						{view: "button", label: "Cancel", click: this.onCancel}
+						{view: "button", label: _("Add"), localId: "button_add", click: this.buttonAddClick},
+						{view: "button", label: _("Cancel"), click: this.onCancel}
 					]}
 				],
 				rules: {

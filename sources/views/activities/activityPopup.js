@@ -7,13 +7,14 @@ import contactsCollection from "../../models/contacts";
 
 export default class ActivityPopup extends JetView {
 	config() {
+		const _ = this.app.getService("locale")._;
 		return {
 			localId: "activity_popup",
 			modal: true,
 			view: "window",
 			width: 600,
 			position: "center",
-			head: {template: "Add", localId: "header"},
+			head: {template: _("Add"), localId: "header"},
 			body: {
 				view: "form",
 				localId: "popup_form",
@@ -21,19 +22,19 @@ export default class ActivityPopup extends JetView {
 				padding: 10,
 				margin: 10,
 				elements: [
-					{view: "textarea", label: "Details", name: "Details"},
-					{view: "combo", options: activityTypes, label: "Type", name: "TypeID"},
-					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: "Contact", name: "ContactID", localId: "contactID"},
+					{view: "textarea", label: _("Details"), name: "Details"},
+					{view: "combo", options: activityTypes, label: _("Type"), name: "TypeID"},
+					{view: "combo", options: {body: {data: contactsCollection, template: "#FirstName# #LastName#"}}, label: _("Contact"), name: "ContactID", localId: "contactID"},
 					{
 						cols: [
-							{view: "datepicker", label: "Date", name: "DueDate", format: DATE_FORMAT_F},
+							{view: "datepicker", label: _("Date"), name: "DueDate", format: DATE_FORMAT_F},
 							{
 								view: "datepicker",
 								localId: "time",
 								width: 300,
 								type: "time",
 								value: "12:00 AM",
-								label: "Time",
+								label: _("Time"),
 								labelWidth: 100,
 								suggest: {
 									type: "timeboard",
@@ -45,11 +46,11 @@ export default class ActivityPopup extends JetView {
 							}
 						]
 					},
-					{view: "checkbox", label: "Comlpeted", name: "State", checkValue: "Close", uncheckValue: "Open"},
+					{view: "checkbox", label: _("Completed"), name: "State", checkValue: "Close", uncheckValue: "Open"},
 					{cols: [
 						{},
-						{view: "button", label: "Add", localId: "button_add", click: () => this.buttonAddClick()},
-						{view: "button", label: "Cancel", click: this.onCancel}
+						{view: "button", label: _("Add"), localId: "button_add", click: () => this.buttonAddClick()},
+						{view: "button", label: _("Cancel"), click: this.onCancel}
 					]}
 				],
 				rules: {
@@ -107,12 +108,13 @@ export default class ActivityPopup extends JetView {
 	}
 
 	showPopup(object, isEdit) {
+		const _ = this.app.getService("locale")._;
 		const popup = this.getRoot();
 		if (!popup) {
 			return;
 		}
-		const buttonName = isEdit ? "Save" : "Add";
-		const popupHeader = isEdit ? "Edit activity" : "Add activity";
+		const buttonName = isEdit ? _("Save") : _("Add");
+		const popupHeader = isEdit ? _("Edit activity") : _("Add activity");
 		if (object) {
 			if (object.DueDate && webix.isDate(object.DueDate)) {
 				const h = object.DueDate.getHours();

@@ -13,6 +13,7 @@ export default class ActivitiesTableView extends JetView {
 	}
 
 	config() {
+		const _ = this.app.getService("locale")._;
 		return this.webix.promise.all([
 			contactsCollection.waitData,
 			activityTypes.waitData
@@ -22,19 +23,19 @@ export default class ActivitiesTableView extends JetView {
 				view: "datatable",
 				columns: [
 					{id: "State", checkValue: "Close", uncheckValue: "Open", header: "", template: "{common.checkbox()}", width: 40},
-					{id: "TypeID", header: ["Activity type", {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
+					{id: "TypeID", header: [_("Activity type"), {content: "selectFilter"}], minWidth: 150, collection: activityTypes, sort: "text"},
 					{
 						id: "DueDate",
 						minWidth: 150,
 						width: 250,
-						header: ["Due date", {content: "datepickerFilter", inputConfig: {format: webix.Date.dateToStr(DATE_FORMAT_F)}, compare: this.dateCompare}],
+						header: [_("Due date"), {content: "datepickerFilter", inputConfig: {format: webix.Date.dateToStr(DATE_FORMAT_F)}, compare: this.dateCompare}],
 						sort: "date",
 						format: webix.Date.dateToStr(DATE_FORMAT_F)
 					},
-					{id: "Details", header: ["Details", {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
+					{id: "Details", header: [_("Details"), {content: "textFilter"}], minWidth: 150, sort: "text", fillspace: true},
 					{
 						id: "ContactID",
-						header: ["Contact", {content: "selectFilter"}],
+						header: [_("Contact"), {content: "selectFilter"}],
 						minWidth: 150,
 						collection: contactsCollection,
 						fillspace: true,
@@ -99,7 +100,14 @@ export default class ActivitiesTableView extends JetView {
 	}
 
 	onDelete(e, obj) {
-		webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
+		const _ = this.$scope.app.getService("locale")._;
+		const info = {
+			title: _("Confirmation"),
+			text: _("Are you sure you want to delete this item permanently?"),
+			ok: _("OK"),
+			cancel: _("Cancel")
+		};
+		webix.confirm(info).then(() => {
 			activitiesCollection.remove(obj);
 		});
 		return false;

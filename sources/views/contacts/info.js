@@ -10,6 +10,7 @@ import FilesTableView from "./files";
 
 export default class ContactInfoView extends JetView {
 	config() {
+		const _ = this.app.getService("locale")._;
 		return statusesCollection.waitData.then(() => {
 			const header = {
 				padding: 10,
@@ -19,8 +20,8 @@ export default class ContactInfoView extends JetView {
 					{
 						css: "background-color: white;",
 						cols: [
-							{view: "button", label: "Delete", width: 150, type: "icon", icon: "wxi wxi-trash", click: this.onDelete},
-							{view: "button", label: "Edit", width: 150, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this._contactId}`)}
+							{view: "button", label: _("Delete"), maxWidth: 200, type: "icon", icon: "wxi wxi-trash", click: this.onDelete},
+							{view: "button", label: _("Edit"), maxWidth: 200, type: "icon", icon: "wxi wxi-pencil", click: () => this.show(`../contacts.details?id=${this._contactId}`)}
 						]
 					}
 				]
@@ -55,11 +56,11 @@ export default class ContactInfoView extends JetView {
 				id: "activitiesTab",
 				rows: [
 					new ActivitiesTableView(this.app, true),
-					{view: "button", label: "Add activity", click: () => this._activityPopup.showPopup({ContactID: this._contactId})}
+					{view: "button", label: _("Add activity"), click: () => this._activityPopup.showPopup({ContactID: this._contactId})}
 				]
 			};
 
-			const uploader = {view: "uploader", localId: "uploader", label: "Upload", autosend: false};
+			const uploader = {view: "uploader", localId: "uploader", label: _("Upload"), autosend: false};
 			const filesTab = {
 				id: "filesTab",
 				rows: [
@@ -80,8 +81,8 @@ export default class ContactInfoView extends JetView {
 								value: "activitiesTab",
 								multiview: true,
 								options: [
-									{value: "Activities", id: "activitiesTab"},
-									{value: "Files", id: "filesTab"}
+									{value: _("Activities"), id: "activitiesTab"},
+									{value: _("Files"), id: "filesTab"}
 								]
 							}
 						]
@@ -134,6 +135,7 @@ export default class ContactInfoView extends JetView {
 	}
 
 	urlChange(view, url) {
+		const _ = this.app.getService("locale")._;
 		if (url[0].page === "contacts.info") {
 			this._contactId = this.getParam("id");
 			if (this._contactId) {
@@ -142,7 +144,7 @@ export default class ContactInfoView extends JetView {
 					filesCollection.filter(obj => +obj.contactId === +this._contactId);
 				}
 				else {
-					this.webix.message({type: "error", text: `Wrong contact's id! (${this._contactId})`});
+					this.webix.message({type: "error", text: `${_("Wrong contact's id!")} (${this._contactId})`});
 				}
 			}
 		}
@@ -164,10 +166,12 @@ export default class ContactInfoView extends JetView {
 	}
 
 	showContact(id) {
+		const _ = this.app.getService("locale")._;
 		const contact = contactsCollection.getItem(id);
 		if (!contact) return;
 
 		const label = "label";
+		const noinfo = _("(no info)");
 
 		const name = this.$$("name");
 		name.define(label, `${contact.FirstName} ${contact.LastName}`);
@@ -184,14 +188,14 @@ export default class ContactInfoView extends JetView {
 						obj.define(label, status);
 					}
 					else {
-						obj.define(label, "(no info)");
+						obj.define(label, noinfo);
 					}
 				}
 				else if (contact[key]) {
 					obj.define(label, contact[key]);
 				}
 				else {
-					obj.define(label, "(no info)");
+					obj.define(label, noinfo);
 				}
 				if (key === "Birthday" && contact[key].length > 10) {
 					obj.define(label, contact.Birthday.substring(0, contact.Birthday.length - 6));

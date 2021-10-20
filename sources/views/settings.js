@@ -11,17 +11,22 @@ export default class SettingsView extends JetView {
 			statusesCollection.waitData,
 			activityTypes.waitData
 		]).then(() => {
+			const lang = this.app.getService("locale").getLang();
+			const _ = this.app.getService("locale")._;
 			const segmented = {
+				localId: "segmented_button",
 				view: "segmented",
 				options: [
-					{id: "ru", value: "Русский"},
-					{id: "en", value: "English"}
-				]
+					{id: "en", value: _("English")},
+					{id: "ru", value: _("Russian")}
+				],
+				value: lang,
+				click: () => this.toggleLanguage()
 			};
 			const language = {
 				padding: 1,
 				cols: [
-					{template: "Language:", borderless: true, width: 150},
+					{template: _("Language"), borderless: true, width: 150},
 					segmented
 				]
 			};
@@ -33,8 +38,8 @@ export default class SettingsView extends JetView {
 				view: "tabbar",
 				multiview: true,
 				options: [
-					{value: "Activity types", id: "activitytypes"},
-					{value: "Statuses", id: "statuses"}
+					{value: _("Activity types"), id: "activitytypes"},
+					{value: _("Statuses"), id: "statuses"}
 				]
 			};
 			const tabviews = {
@@ -46,7 +51,7 @@ export default class SettingsView extends JetView {
 			};
 			const addbutton = {
 				view: "button",
-				label: "Add",
+				label: _("Add"),
 				click: this.onAddClick
 			};
 			const tables = {
@@ -77,5 +82,11 @@ export default class SettingsView extends JetView {
 
 	init() {
 		this._popup = this.ui(ItemPopup);
+	}
+
+	toggleLanguage() {
+		const langs = this.app.getService("locale");
+		const value = this.$$("segmented_button").getValue();
+		langs.setLang(value);
 	}
 }

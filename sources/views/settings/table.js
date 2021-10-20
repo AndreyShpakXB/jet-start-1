@@ -7,13 +7,14 @@ export default class EditTableView extends JetView {
 	}
 
 	config() {
+		const _ = this.app.getService("locale")._;
 		return {
 			localId: "table",
 			view: "datatable",
 			editable: true,
 			columns: [
-				{id: "Value", header: "Value", maxWidth: 300, editor: "text"},
-				{id: "Icon", header: "Icon", fillspace: true, editor: "text"},
+				{id: "Value", header: _("Value"), maxWidth: 300, editor: "text"},
+				{id: "Icon", header: _("Icon"), fillspace: true, editor: "text"},
 				{id: "delete", header: "", template: "{common.trashIcon()}", width: 40}
 			],
 			onClick: {
@@ -46,7 +47,14 @@ export default class EditTableView extends JetView {
 	}
 
 	onDelete(e, obj) {
-		webix.confirm("Are you sure you want to delete this item permanently?").then(() => {
+		const _ = this.$scope.app.getService("locale")._;
+		const info = {
+			title: _("Confirmation"),
+			text: _("Are you sure you want to delete this item permanently?"),
+			ok: _("OK"),
+			cancel: _("Cancel")
+		};
+		webix.confirm(info).then(() => {
 			this.$scope._dataCollection.remove(obj);
 		});
 		return false;

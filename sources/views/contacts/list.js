@@ -4,6 +4,7 @@ import contactsCollection from "../../models/contacts";
 
 export default class ContactsListView extends JetView {
 	config() {
+		const _ = this.app.getService("locale")._;
 		const list = {
 			localId: "list",
 			view: "list",
@@ -20,14 +21,14 @@ export default class ContactsListView extends JetView {
 
 		const button = {
 			view: "button",
-			label: "Add contact",
+			label: _("Add contact"),
 			click: this.onAdd
 		};
 
 		const search = {
 			localId: "search",
 			view: "text",
-			placeholder: "type to find matching contacts"
+			placeholder: _("type to find matching contacts")
 		};
 
 		const ui = {

@@ -7,12 +7,13 @@ import ActivitiesTableView from "./activities/table";
 
 export default class ActivitiesView extends JetView {
 	config() {
+		const _ = this.app.getService("locale")._;
 		const addButton = {
 			localId: "buttonAdd",
 			view: "button",
 			type: "icon",
 			template: this.createButtonIconTemplate("fas fa-plus-square"),
-			label: "Add activity",
+			label: _("Add activity"),
 			width: 150,
 			click: () => this._activityPopup.showPopup()
 		};
@@ -20,13 +21,13 @@ export default class ActivitiesView extends JetView {
 		const tabbar = {
 			view: "tabbar",
 			options: [
-				"All",
-				"Overdue",
-				"Completed",
-				"Today",
-				"Tomorrow",
-				"This week",
-				"This month"
+				_("All"),
+				_("Overdue"),
+				_("Completed"),
+				_("Today"),
+				_("Tomorrow"),
+				_("This week"),
+				_("This month")
 			],
 			on: {
 				onAfterTabClick: this.onAfterFilterTabClick
@@ -56,6 +57,7 @@ export default class ActivitiesView extends JetView {
 	}
 
 	onAfterFilterTabClick(tab) {
+		const _ = this.$scope.app.getService("locale")._;
 		function addDays(date, days) {
 			const timespan = new Date().setDate(date.getDate() + days);
 			return new Date(timespan);
@@ -66,43 +68,43 @@ export default class ActivitiesView extends JetView {
 		const formatter = webix.Date.strToDate(SERVER_FORMAT);
 
 		switch (tab) {
-			case "Overdue":
+			case _("Overdue"):
 				activitiesCollection.filter((obj) => {
 					const date = formatter(obj.DueDate);
 					return obj.State === "Open" && date.getTime() < todayDateTime;
 				});
 				break;
-			case "Completed":
+			case _("Completed"):
 				activitiesCollection.filter("State", "Close");
 				break;
-			case "Today":
+			case _("Today"):
 				activitiesCollection.filter((obj) => {
 					const date = webix.Date.dayStart(formatter(obj.DueDate));
 					return webix.Date.equal(date, todayDate);
 				});
 				break;
-			case "Tomorrow":
+			case _("Tomorrow"):
 				activitiesCollection.filter((obj) => {
 					const date = webix.Date.dayStart(formatter(obj.DueDate));
 					const tomorrow = webix.Date.dayStart(addDays(todayDate, 1));
 					return webix.Date.equal(date, tomorrow);
 				});
 				break;
-			case "This week":
+			case _("This week"):
 				activitiesCollection.filter((obj) => {
 					const date = webix.Date.dayStart(formatter(obj.DueDate));
 					const date2 = webix.Date.dayStart(addDays(todayDate, -7));
 					return date > date2 && date < todayDate;
 				});
 				break;
-			case "This month":
+			case _("This month"):
 				activitiesCollection.filter((obj) => {
 					const date = webix.Date.dayStart(formatter(obj.DueDate));
 					const date2 = webix.Date.dayStart(addDays(todayDate, -30));
 					return date > date2 && date < todayDate;
 				});
 				break;
-			case "All":
+			case _("All"):
 			default:
 				activitiesCollection.filter(() => true);
 		}

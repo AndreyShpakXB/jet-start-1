@@ -12,13 +12,6 @@ export default class ActivitiesTableView extends BaseView {
 	}
 
 	config() {
-		const lang = this.app.getService("locale").getLang();
-		if (lang === "en") {
-			webix.i18n.setLocale("en-US");
-		}
-		else {
-			webix.i18n.setLocale("ru-RU");
-		}
 		return this.webix.promise.all([
 			contactsCollection.waitData,
 			activityTypes.waitData
@@ -59,6 +52,11 @@ export default class ActivitiesTableView extends BaseView {
 						width: 40
 					}
 				],
+				on: {
+					onCheck() {
+						this.$scope.app.callEvent("onActivitiesCollectionUpdated", []);
+					}
+				},
 				onClick: {
 					"wxi-pencil": this.onEdit,
 					"wxi-trash": this.onDelete

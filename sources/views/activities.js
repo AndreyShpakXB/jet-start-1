@@ -18,6 +18,7 @@ export default class ActivitiesView extends BaseView {
 
 		const tabbar = {
 			view: "tabbar",
+			localId: "tabbar",
 			options: [
 				{id: "all", value: this._("All")},
 				{id: "overdue", value: this._("Overdue")},
@@ -43,7 +44,14 @@ export default class ActivitiesView extends BaseView {
 	}
 
 	init() {
+		const tabbar = this.$$("tabbar");
 		this._activityPopup = this.ui(ActivityPopup);
+		this.on(this.app, "onActivitiesCollectionUpdated", () => {
+			if (tabbar) {
+				const tab = tabbar.getValue();
+				this.onTabChanged(tab);
+			}
+		});
 	}
 
 	createButtonIconTemplate(icon) {
@@ -62,6 +70,7 @@ export default class ActivitiesView extends BaseView {
 		switch (tab) {
 			case "overdue":
 				activitiesCollection.filter((obj) => {
+					if (!obj.DueDate) return false;
 					const date = formatter(obj.DueDate);
 					return obj.State === STATUSES.OPEN && date.getTime() < todayDateTime;
 				});

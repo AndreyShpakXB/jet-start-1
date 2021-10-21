@@ -20,6 +20,6 @@ if (!BUILD_AS_MODULE) {
 	webix.ready(() => {
 		app.render();
 		app.attachEvent("app:error:resolve", () => webix.delay(() => app.show("/top/contacts")));
-		app.use(plugins.Locale, {storage: webix.storage.local});
+		app.use(plugins.Locale, {webix: {en: "en-US", ru: "ru-RU"}});
 	});
 }

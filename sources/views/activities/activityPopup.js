@@ -98,6 +98,7 @@ export default class ActivityPopup extends BaseView {
 		form.clear();
 		form.clearValidation();
 		this.getRoot().hide();
+		this.app.callEvent("onActivitiesCollectionUpdated", []);
 	}
 
 	disableContactCombo() {

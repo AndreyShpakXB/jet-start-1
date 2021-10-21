@@ -29,7 +29,7 @@ export default class ContactInfoView extends BaseView {
 			const w = 250;
 			const firstCol = {
 				rows: [
-					{view: "template", localId: "image", template: "<img style='object-fit: cover; height: 200px; width: 250px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
+					{view: "template", localId: "image", template: this.getImageTemplate, height: 200, borderless: true},
 					{view: "label", localId: "StatusID", label: "", css: "status", width: w}
 				]
 			};
@@ -211,5 +211,12 @@ export default class ContactInfoView extends BaseView {
 		return `<div style='display:flex;align-items: center;;'>
 					<span style='display:inline' class='${icon}'></span>&nbsp;#label#
 				</div>`;
+	}
+
+	getImageTemplate(obj) {
+		if (!obj.src) {
+			obj.src = "";
+		}
+		return `<img style='object-fit: cover; height: 200px; width: 250px' src='${obj.src}' alt='Image'></img>`;
 	}
 }

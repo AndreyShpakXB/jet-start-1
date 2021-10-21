@@ -65,7 +65,7 @@ export default class ContactsListView extends BaseView {
 			const value = this.$$("search").getValue().toLowerCase().trim();
 			const count = contactsCollection.count();
 			if (!value || !count) {
-				contactsCollection.filter(() => true);
+				list.filter();
 				return;
 			}
 			const keys = ["FirstName", "LastName", "Job", "Company", "Website", "Address", "Email", "Skype"];

@@ -107,7 +107,7 @@ export default class ActivitiesView extends BaseView {
 				break;
 			case "all":
 			default:
-				activitiesCollection.filter(() => true);
+				activitiesCollection.filter();
 		}
 	}
 

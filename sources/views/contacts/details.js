@@ -35,7 +35,7 @@ export default class DetailsView extends BaseView {
 				{
 					borderless: true,
 					cols: [
-						{view: "template", localId: "image", template: "<img style='object-fit: fill; height: 200px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
+						{view: "template", localId: "image", template: this.getImageTemplate, height: 200, borderless: true},
 						{
 							borderless: true,
 							margin: 10,
@@ -182,5 +182,12 @@ export default class DetailsView extends BaseView {
 		const button = this.$$("button_add");
 		button.define(property, value);
 		button.refresh();
+	}
+
+	getImageTemplate(obj) {
+		if (!obj.src) {
+			obj.src = "";
+		}
+		return `<img style='object-fit: cover; height: 200px; width: 250px' src='${obj.src}' alt='Image'></img>`;
 	}
 }

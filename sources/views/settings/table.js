@@ -7,6 +7,7 @@ export default class EditTableView extends BaseView {
 	}
 
 	config() {
+		const self = this;
 		return {
 			localId: "table",
 			view: "datatable",
@@ -28,10 +29,13 @@ export default class EditTableView extends BaseView {
 				onBeforeEditStop(state, editor, ignore) {
 					const check = (editor.getValue() !== "");
 					if (!ignore && !check) {
-						webix.message({type: "error", text: `${this._("Column")} '${this._(editor.column)}' ${this._("must not be empty")}`});
+						webix.message({type: "error", text: `${self._("Column")} '${self._(editor.column)}' ${self._("must not be empty")}`});
 						return false;
 					}
 					return true;
+				},
+				onBeforeEditStart() {
+					self.editCancel();
 				}
 			},
 			ready() {

@@ -52,11 +52,11 @@ export default class ActivitiesTableView extends BaseView {
 						width: 40
 					}
 				],
-				on: {
-					onCheck() {
-						this.$scope.app.callEvent("onActivitiesCollectionUpdated", []);
-					}
-				},
+				// on: {
+				// 	onCheck() {
+				// 		this.$scope.app.callEvent("onActivitiesCollectionUpdated", []);
+				// 	}
+				// },
 				onClick: {
 					"wxi-pencil": this.onEdit,
 					"wxi-trash": this.onDelete

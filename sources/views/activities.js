@@ -29,7 +29,7 @@ export default class ActivitiesView extends BaseView {
 				{id: "month", value: this._("This month")}
 			],
 			on: {
-				onChange: this.onTabChanged
+				onChange: this.onTabChanged.bind(this)
 			}
 		};
 		const spacer = {maxWidth: 80};
@@ -46,12 +46,20 @@ export default class ActivitiesView extends BaseView {
 	init() {
 		const tabbar = this.$$("tabbar");
 		this._activityPopup = this.ui(ActivityPopup);
-		this.on(this.app, "onActivitiesCollectionUpdated", () => {
-			if (tabbar) {
-				const tab = tabbar.getValue();
-				this.onTabChanged(tab);
+		this.on(activitiesCollection.data, "onStoreUpdated", (id, obj, mode) => {
+			if (mode === "update" || mode === "add") {
+				if (tabbar) {
+					const tab = tabbar.getValue();
+					this.onTabChanged(tab);
+				}
 			}
 		});
+		// this.on(this.app, "onActivitiesCollectionUpdated", () => {
+		// 	if (tabbar) {
+		// 		const tab = tabbar.getValue();
+		// 		this.onTabChanged(tab);
+		// 	}
+		// });
 	}
 
 	createButtonIconTemplate(icon) {
@@ -80,28 +88,32 @@ export default class ActivitiesView extends BaseView {
 				break;
 			case "today":
 				activitiesCollection.filter((obj) => {
+					if (!obj.DueDate) return false;
 					const date = webix.Date.dayStart(formatter(obj.DueDate));
 					return webix.Date.equal(date, todayDate);
 				});
 				break;
 			case "tomorrow":
 				activitiesCollection.filter((obj) => {
+					if (!obj.DueDate) return false;
 					const date = webix.Date.dayStart(formatter(obj.DueDate));
-					const tomorrow = webix.Date.dayStart(this.$scope.addDays(todayDate, 1));
+					const tomorrow = webix.Date.dayStart(this.addDays(todayDate, 1));
 					return webix.Date.equal(date, tomorrow);
 				});
 				break;
 			case "week":
 				activitiesCollection.filter((obj) => {
+					if (!obj.DueDate) return false;
 					const date = webix.Date.dayStart(formatter(obj.DueDate));
-					const date2 = webix.Date.dayStart(this.$scope.addDays(todayDate, -7));
+					const date2 = webix.Date.dayStart(this.addDays(todayDate, -7));
 					return date > date2 && date < todayDate;
 				});
 				break;
 			case "month":
 				activitiesCollection.filter((obj) => {
+					if (!obj.DueDate) return false;
 					const date = webix.Date.dayStart(formatter(obj.DueDate));
-					const date2 = webix.Date.dayStart(this.$scope.addDays(todayDate, -30));
+					const date2 = webix.Date.dayStart(this.addDays(todayDate, -30));
 					return date > date2 && date < todayDate;
 				});
 				break;

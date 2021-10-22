@@ -46,20 +46,12 @@ export default class ActivitiesView extends BaseView {
 	init() {
 		const tabbar = this.$$("tabbar");
 		this._activityPopup = this.ui(ActivityPopup);
-		this.on(activitiesCollection.data, "onStoreUpdated", (id, obj, mode) => {
-			if (mode === "update" || mode === "add") {
-				if (tabbar) {
-					const tab = tabbar.getValue();
-					this.onTabChanged(tab);
-				}
+		this.on(this.app, "onActivitiesCollectionUpdated", () => {
+			if (tabbar) {
+				const tab = tabbar.getValue();
+				this.onTabChanged(tab);
 			}
 		});
-		// this.on(this.app, "onActivitiesCollectionUpdated", () => {
-		// 	if (tabbar) {
-		// 		const tab = tabbar.getValue();
-		// 		this.onTabChanged(tab);
-		// 	}
-		// });
 	}
 
 	createButtonIconTemplate(icon) {

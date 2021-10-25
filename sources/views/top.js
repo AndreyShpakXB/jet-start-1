@@ -2,10 +2,11 @@ import {JetView, plugins} from "webix-jet";
 
 export default class TopView extends JetView {
 	config() {
+		const _ = this.app.getService("locale")._;
 		const header = {
 			localId: "title",
 			type: "header",
-			template: "App",
+			template: _("App"),
 			css: "app-title"
 		};
 
@@ -16,9 +17,9 @@ export default class TopView extends JetView {
 			layout: "y",
 			select: true,
 			data: [
-				{value: "<span class='fas fa-users'></span> Contacts", id: "contacts"},
-				{value: "<span class='fas fa-table'></span> Activities", id: "activities"},
-				{value: "<span class='fas fa-cogs'></span> Settings", id: "settings"}
+				{value: `<span class='fas fa-users'></span> ${_("Contacts")}`, id: "contacts"},
+				{value: `<span class='fas fa-table'></span> ${_("Activities")}`, id: "activities"},
+				{value: `<span class='fas fa-cogs'></span> ${_("Settings")}`, id: "settings"}
 			]
 		};
 

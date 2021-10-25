@@ -1,8 +1,8 @@
-import {JetView} from "webix-jet";
-
+import BaseView from "../../BaseView";
 import contactsCollection from "../../models/contacts";
+import statusesCollection from "../../models/statuses";
 
-export default class ContactsListView extends JetView {
+export default class ContactsListView extends BaseView {
 	config() {
 		const list = {
 			localId: "list",
@@ -14,23 +14,92 @@ export default class ContactsListView extends JetView {
 			},
 			select: true,
 			on: {
-				onAfterSelect: id => this.show(`./contacts.info?id=${id}`)
+				onAfterSelect: (id) => {
+					if (!id) return;
+					this.show(`./contacts.info?id=${id}`);
+				}
 			}
 		};
 
 		const button = {
 			view: "button",
-			label: "Add contact",
+			label: this._("Add contact"),
 			click: this.onAdd
+		};
+
+		const search = {
+			localId: "search",
+			view: "text",
+			placeholder: this._("type to find matching contacts")
 		};
 
 		const ui = {
 			rows: [
+				search,
 				list,
 				button
 			]
 		};
 		return ui;
+	}
+
+	init() {
+		const list = this.$$("list");
+		const showContact = (id) => {
+			if (!id) return;
+			this.show(`./contacts.info?id=${id}`);
+			list.select(id);
+		};
+
+		contactsCollection.waitData.then(() => {
+			list.parse(contactsCollection);
+			list.select(contactsCollection.getFirstId());
+		});
+		this.on(this.app, "onAfterDetailsInfoClosed", (id) => {
+			showContact(id);
+		});
+		this.on(this.app, "onAfterContactDeleted", (id) => {
+			showContact(id);
+		});
+		this.on(this.$$("search"), "onTimedKeyPress", () => {
+			const value = this.$$("search").getValue().toLowerCase().trim();
+			const count = contactsCollection.count();
+			if (!value || !count) {
+				list.filter();
+				return;
+			}
+			const keys = ["FirstName", "LastName", "Job", "Company", "Website", "Address", "Email", "Skype"];
+			list.filter((obj) => {
+				const res = keys.some((key) => {
+					const val = obj[key].toString().toLowerCase();
+					return val.indexOf(value) !== -1;
+				});
+				if (res) return true;
+				if (obj.Phone === value) return true;
+
+				const statusId = obj.StatusID;
+				if (statusId) {
+					const status = statusesCollection.getItem(obj.StatusID);
+					if (status && status.Value.toLowerCase().indexOf(value) !== -1) {
+						return true;
+					}
+				}
+
+				if (obj.Birthday) {
+					const birthdayYear = obj.Birthday.substring(0, 4);
+					if (birthdayYear === value) {
+						return true;
+					}
+				}
+				if (obj.StartDate) {
+					const startdate = obj.StartDate.substring(0, 4);
+					if (startdate === value) {
+						return true;
+					}
+				}
+				return false;
+			});
+		});
 	}
 
 	createTemplate(obj) {
@@ -51,24 +120,5 @@ export default class ContactsListView extends JetView {
 	onAdd() {
 		this.$scope.show("./contacts.details");
 		this.$scope.$$("list").unselectAll();
-	}
-
-	init() {
-		const list = this.$$("list");
-		const showContact = (id) => {
-			this.show(`./contacts.info?id=${id}`);
-			list.select(id);
-		};
-
-		contactsCollection.waitData.then(() => {
-			list.parse(contactsCollection);
-			list.select(contactsCollection.getFirstId());
-		});
-		this.on(this.app, "onAfterDetailsInfoClosed", (id) => {
-			showContact(id);
-		});
-		this.on(this.app, "onAfterContactDeleted", (id) => {
-			showContact(id);
-		});
 	}
 }

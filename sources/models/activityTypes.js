@@ -6,7 +6,8 @@ const activityTypes = new webix.DataCollection({
 			obj.value = obj.Value;
 		}
 	},
-	url: URLs.typesUrl
+	url: URLs.typesUrl,
+	save: `rest->${URLs.typesUrl}`
 });
 
 export default activityTypes;

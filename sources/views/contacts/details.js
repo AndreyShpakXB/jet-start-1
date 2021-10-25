@@ -1,12 +1,11 @@
-import {JetView} from "webix-jet";
-
+import BaseView from "../../BaseView";
 import {DATE_FORMAT_M, SERVER_FORMAT} from "../../helpers";
 import contactsCollection from "../../models/contacts";
 import statusesCollection from "../../models/statuses";
 
-export default class DetailsView extends JetView {
+export default class DetailsView extends BaseView {
 	config() {
-		const header = {view: "label", localId: "name", label: "Edit contact", css: "label-info-name"};
+		const header = {view: "label", localId: "name", label: this._("Edit contact"), css: "label-info-name"};
 
 		const maxWidth = 450;
 		const labelWidth = 150;
@@ -14,14 +13,14 @@ export default class DetailsView extends JetView {
 			minWidth: 200,
 			margin: 15,
 			rows: [
-				{view: "text", label: "First name", name: "FirstName", maxWidth, labelWidth},
-				{view: "text", label: "Last name", name: "LastName", maxWidth, labelWidth},
-				{view: "datepicker", label: "Joining date", name: "StartDate", maxWidth, labelWidth, format: DATE_FORMAT_M},
-				{view: "combo", label: "Status", name: "StatusID", maxWidth, labelWidth, options: {body: {data: statusesCollection, template: "#Value#"}}},
-				{view: "text", label: "Job", name: "Job", maxWidth, labelWidth},
-				{view: "text", label: "Company", name: "Company", maxWidth, labelWidth},
-				{view: "text", label: "Website", name: "Website", maxWidth, labelWidth},
-				{view: "text", label: "Address", name: "Address", maxWidth, labelWidth}
+				{view: "text", label: this._("First name"), name: "FirstName", maxWidth, labelWidth},
+				{view: "text", label: this._("Last name"), name: "LastName", maxWidth, labelWidth},
+				{view: "datepicker", label: this._("Joining date"), name: "StartDate", maxWidth, labelWidth, format: DATE_FORMAT_M},
+				{view: "combo", label: this._("Status"), name: "StatusID", maxWidth, labelWidth, options: {body: {data: statusesCollection, template: "#Value#"}}},
+				{view: "text", label: this._("Job"), name: "Job", maxWidth, labelWidth},
+				{view: "text", label: this._("Company"), name: "Company", maxWidth, labelWidth},
+				{view: "text", label: this._("Website"), name: "Website", maxWidth, labelWidth},
+				{view: "text", label: this._("Address"), name: "Address", maxWidth, labelWidth}
 			]
 		};
 
@@ -29,22 +28,22 @@ export default class DetailsView extends JetView {
 			minWidth: 200,
 			margin: 15,
 			rows: [
-				{view: "text", label: "Email", name: "Email", maxWidth, labelWidth},
-				{view: "text", label: "Skype", name: "Skype", maxWidth, labelWidth},
-				{view: "text", label: "Phone", name: "Phone", maxWidth, labelWidth},
-				{view: "datepicker", label: "Birthday", name: "Birthday", maxWidth, labelWidth, format: DATE_FORMAT_M},
+				{view: "text", label: this._("Email"), name: "Email", maxWidth, labelWidth},
+				{view: "text", label: this._("Skype"), name: "Skype", maxWidth, labelWidth},
+				{view: "text", label: this._("Phone"), name: "Phone", maxWidth, labelWidth},
+				{view: "datepicker", label: this._("Birthday"), name: "Birthday", maxWidth, labelWidth, format: DATE_FORMAT_M},
 				{
 					borderless: true,
 					cols: [
-						{view: "template", localId: "image", template: "<img style='object-fit: fill; height: 200px' src='#src#' alt='Image'></img>", height: 200, borderless: true},
+						{view: "template", localId: "image", template: this.getImageTemplate, height: 200, borderless: true},
 						{
 							borderless: true,
 							margin: 10,
 							paddingX: 10,
 							rows: [
 								{},
-								{view: "uploader", localId: "uploader", label: "Change photo", autosend: false, width: 150, accept: "image/jpeg, image/png"},
-								{view: "button", label: "Delete photo", width: 150, click: this.onPhotoDelete}
+								{view: "uploader", localId: "uploader", label: this._("Change photo"), autosend: false, maxWidth: 250, accept: "image/jpeg, image/png"},
+								{view: "button", label: this._("Delete photo"), maxWidth: 250, click: this.onPhotoDelete}
 							]
 						}
 					]
@@ -57,14 +56,14 @@ export default class DetailsView extends JetView {
 				{},
 				{
 					view: "button",
-					label: "Cancel",
-					width: 100,
+					label: this._("Cancel"),
+					width: 150,
 					click: () => this.app.callEvent("onAfterDetailsInfoClosed", [this._contactId])
 				},
 				{
 					view: "button",
-					label: "Save",
-					width: 150,
+					label: this._("Save"),
+					maxWidth: 250,
 					localId: "button_add",
 					click: this.onSave
 				}
@@ -117,6 +116,7 @@ export default class DetailsView extends JetView {
 		if (url[0].page === "contacts.details") {
 			if (!url[0].params.id) {
 				this.$$("form").clear();
+				this.clearImage();
 				this.showAsAddingForm();
 				this._contactId = contactsCollection.getFirstId();
 			}
@@ -133,11 +133,10 @@ export default class DetailsView extends JetView {
 	onPhotoDelete() {
 		const item = contactsCollection.getItem(this.$scope._contactId);
 		if (item) {
-			this.$scope._photoBuffer = "";
-			this.$scope.$$("image").setValues({src: ""});
+			this.$scope.clearImage();
 		}
 		else {
-			this.$scope.webix.message({type: "error", text: "load error"});
+			this.$scope.webix.message({type: "error", text: this._("Loading error")});
 		}
 	}
 
@@ -173,7 +172,7 @@ export default class DetailsView extends JetView {
 	}
 
 	showAsAddingForm() {
-		const value = "Add contact";
+		const value = this._("Add contact");
 		const property = "label";
 
 		const name = this.$$("name");
@@ -183,5 +182,17 @@ export default class DetailsView extends JetView {
 		const button = this.$$("button_add");
 		button.define(property, value);
 		button.refresh();
+	}
+
+	getImageTemplate(obj) {
+		if (!obj.src) {
+			obj.src = "";
+		}
+		return `<img style='object-fit: cover; height: 200px; width: 250px' src='${obj.src}' alt='Image'></img>`;
+	}
+
+	clearImage() {
+		this._photoBuffer = "";
+		this.$$("image").setValues({src: ""});
 	}
 }

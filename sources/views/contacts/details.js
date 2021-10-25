@@ -116,6 +116,7 @@ export default class DetailsView extends BaseView {
 		if (url[0].page === "contacts.details") {
 			if (!url[0].params.id) {
 				this.$$("form").clear();
+				this.clearImage();
 				this.showAsAddingForm();
 				this._contactId = contactsCollection.getFirstId();
 			}
@@ -132,8 +133,7 @@ export default class DetailsView extends BaseView {
 	onPhotoDelete() {
 		const item = contactsCollection.getItem(this.$scope._contactId);
 		if (item) {
-			this.$scope._photoBuffer = "";
-			this.$scope.$$("image").setValues({src: ""});
+			this.$scope.clearImage();
 		}
 		else {
 			this.$scope.webix.message({type: "error", text: this._("Loading error")});
@@ -189,5 +189,10 @@ export default class DetailsView extends BaseView {
 			obj.src = "";
 		}
 		return `<img style='object-fit: cover; height: 200px; width: 250px' src='${obj.src}' alt='Image'></img>`;
+	}
+
+	clearImage() {
+		this._photoBuffer = "";
+		this.$$("image").setValues({src: ""});
 	}
 }
